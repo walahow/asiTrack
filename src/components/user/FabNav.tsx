@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Grip, Home, BookOpen, PlayCircle, User } from "lucide-react";
+import { Orbit, Home, BookOpen, PlayCircle, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function FabNav() {
@@ -72,11 +72,11 @@ export default function FabNav() {
         <button 
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
-            "w-14 h-14 rounded-full flex items-center justify-center shadow-xl shadow-primary/30 transition-all duration-300",
-            isOpen ? "bg-white text-primary rotate-45" : "bg-primary text-white"
+            "w-14 h-14 rounded-full flex items-center justify-center shadow-xl shadow-primary/30 transition-all duration-500",
+            isOpen ? "bg-white text-primary rotate-180" : "bg-primary text-white"
           )}
         >
-          <Grip size={28} strokeWidth={2.5} />
+          <Orbit size={28} strokeWidth={2} />
         </button>
       </div>
     </>

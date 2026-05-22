@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { 
   LayoutDashboard, 
   FileText, 
@@ -17,9 +18,21 @@ export default function AdminLayout({
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col hidden md:flex">
-        <div className="p-6 border-b border-gray-100">
-          <h1 className="text-2xl font-bold text-primary tracking-tight">asiTrack</h1>
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Admin Portal</span>
+        <div className="p-6 border-b border-gray-100 flex items-center gap-4">
+          <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-primary/5 p-1.5 border border-primary/10 flex items-center justify-center shadow-sm">
+            <Image
+              src="/logo.png"
+              alt="asiTrack Logo"
+              fill
+              sizes="48px"
+              className="object-contain"
+              priority
+            />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-primary tracking-tight leading-none">asiTrack</h1>
+            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block mt-1.5">Admin Portal</span>
+          </div>
         </div>
         
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
@@ -55,8 +68,18 @@ export default function AdminLayout({
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center px-6 md:hidden">
-          <h1 className="text-xl font-bold text-primary">asiTrack Admin</h1>
+        <header className="h-20 bg-white border-b border-gray-200 flex items-center gap-4 px-6 md:hidden">
+          <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-primary/5 p-1.5 border border-primary/10 flex items-center justify-center shadow-sm">
+            <Image
+              src="/logo.png"
+              alt="asiTrack Logo"
+              fill
+              sizes="48px"
+              className="object-contain"
+              priority
+            />
+          </div>
+          <h1 className="text-2xl font-bold text-primary tracking-tight">asiTrack Admin</h1>
         </header>
         <div className="flex-1 overflow-auto p-6 md:p-8">
           {children}

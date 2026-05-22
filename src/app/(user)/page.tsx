@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Check, X, Sparkles, PartyPopper, CheckCircle2, CircleDashed } from "lucide-react";
 
 export default function Home() {
@@ -16,6 +17,23 @@ export default function Home() {
 
   return (
     <div className="flex flex-col flex-1 pb-16 pt-10 px-6 overflow-y-auto">
+      {/* App Brand Header */}
+      <div className="flex items-center gap-4 mb-8">
+        <div className="relative w-12 h-12 rounded-[1.25rem] overflow-hidden bg-primary/5 p-2.5 border border-primary/10 flex items-center justify-center shadow-sm">
+          <Image
+            src="/logo.png"
+            alt="asiTrack Logo"
+            fill
+            sizes="64px"
+            className="object-contain"
+            priority
+          />
+        </div>
+        <span className="font-bold text-2xl tracking-tight text-primary font-sans">
+          asiTrack
+        </span>
+      </div>
+
       {/* Greeting Section */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800 tracking-tight leading-tight">

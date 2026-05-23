@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Check, X, Sparkles, PartyPopper, CheckCircle2, CircleDashed } from "lucide-react";
 
-export default function Home() {
+export default function DashboardHome() {
   const currentDay = 3;
 
   // Mock timeline data

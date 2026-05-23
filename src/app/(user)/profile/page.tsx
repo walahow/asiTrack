@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { signOut } from "next-auth/react";
 import { User as UserIcon, Bell, Settings, LogOut, ChevronRight, Edit3, X, Check, Calendar, Mail, BookOpen, Briefcase, MapPin, Award } from "lucide-react";
 
 interface UserProfile {
@@ -17,21 +18,53 @@ interface UserProfile {
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // Initial mock state matching the exact model schema
   const [profile, setProfile] = useState<UserProfile>({
-    nama_lengkap: "Bunda Budi Rahayu",
-    username: "bundabudi",
-    tgl_melahirkan: "2026-05-19", // yyyy-MM-dd
-    usia: 28,
-    anak_ke_berapa: 2,
-    alamat: "Jl. Melati No. 12, Kebayoran Baru, Jakarta Selatan",
-    pendidikan: "S1",
-    pekerjaan: "Ibu Rumah Tangga"
+    nama_lengkap: "",
+    username: "",
+    tgl_melahirkan: "",
   });
 
   // Temporary form state
   const [tempProfile, setTempProfile] = useState<UserProfile>({ ...profile });
+
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const res = await fetch("/api/user/profile");
+        const data = await res.json();
+        if (res.ok && data.status === "success" && data.user) {
+          // Format birthdate to yyyy-MM-dd for HTML5 input
+          let tglStr = "";
+          if (data.user.tgl_melahirkan) {
+            const d = new Date(data.user.tgl_melahirkan);
+            tglStr = d.toISOString().split("T")[0];
+          }
+          const loadedProfile: UserProfile = {
+            nama_lengkap: data.user.nama_lengkap || "",
+            username: data.user.username || "",
+            tgl_melahirkan: tglStr,
+            usia: data.user.usia,
+            anak_ke_berapa: data.user.anak_ke_berapa,
+            alamat: data.user.alamat || "",
+            pendidikan: data.user.pendidikan,
+            pekerjaan: data.user.pekerjaan || "",
+          };
+          setProfile(loadedProfile);
+          setTempProfile(loadedProfile);
+        } else {
+          setError(data.message || "Gagal mengambil data profil.");
+        }
+      } catch (err) {
+        setError("Gagal menghubungi server.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchProfile();
+  }, []);
 
   // Safe formatting helper for dates (Indonesian month names)
   const formatTglMelahirkan = (dateStr: string) => {
@@ -48,6 +81,7 @@ export default function ProfilePage() {
   // Safe laktasi day index calculation based on tgl_melahirkan in WIB
   const calculateHariKe = (tglStr: string) => {
     try {
+      if (!tglStr) return "Hari ke-1 Menyusui";
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const birth = new Date(tglStr);
@@ -69,21 +103,71 @@ export default function ProfilePage() {
     setIsEditing(true);
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!tempProfile.nama_lengkap.trim() || !tempProfile.username.trim() || !tempProfile.tgl_melahirkan) {
       alert("Nama Lengkap, Username, dan Tanggal Melahirkan harus diisi.");
       return;
     }
     
-    // Save state
-    setProfile({ ...tempProfile });
-    setIsEditing(false);
-    
-    // Show beautiful custom success toast
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+    try {
+      const res = await fetch("/api/user/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nama_lengkap: tempProfile.nama_lengkap,
+          username: tempProfile.username,
+          tgl_melahirkan: tempProfile.tgl_melahirkan,
+          usia: tempProfile.usia,
+          anak_ke_berapa: tempProfile.anak_ke_berapa,
+          alamat: tempProfile.alamat,
+          pendidikan: tempProfile.pendidikan,
+          pekerjaan: tempProfile.pekerjaan,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Gagal memperbarui profil.");
+      }
+
+      setProfile({ ...tempProfile });
+      setIsEditing(false);
+      
+      // Show beautiful custom success toast
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    } catch (err: any) {
+      alert(err.message || "Terjadi kesalahan saat menyimpan profil.");
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col flex-1 items-center justify-center min-h-[50vh] bg-[#FAF8F5]">
+        <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin"></div>
+        <p className="text-gray-500 font-medium mt-4">Memuat profil Bunda...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col flex-1 items-center justify-center min-h-[50vh] bg-[#FAF8F5] px-6 text-center">
+        <div className="w-16 h-16 bg-rose-50 text-rose-500 rounded-3xl flex items-center justify-center mb-4">
+          <X size={32} />
+        </div>
+        <h3 className="text-xl font-bold text-gray-800 mb-2">Gagal Memuat Profil</h3>
+        <p className="text-gray-500 text-sm mb-6">{error}</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="bg-primary text-white py-3 px-6 rounded-2xl font-bold shadow-md hover:bg-primary-hover transition-colors"
+        >
+          Coba Lagi
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col flex-1 pb-32 pt-10 px-6 overflow-y-auto bg-[#FAF8F5]">
@@ -210,7 +294,10 @@ export default function ProfilePage() {
             <ChevronRight size={20} className="text-gray-400 group-hover:text-primary transition-colors" />
           </button>
           
-          <button className="w-full bg-white rounded-[2rem] p-4 flex items-center justify-between shadow-sm border border-gray-100 hover:shadow-md transition-shadow group">
+          <button 
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="w-full bg-white rounded-[2rem] p-4 flex items-center justify-between shadow-sm border border-gray-100 hover:shadow-md transition-shadow group"
+          >
             <div className="flex items-center gap-4 text-red-600">
               <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center group-hover:scale-105 transition-transform">
                 <LogOut size={22} />

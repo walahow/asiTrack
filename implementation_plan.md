@@ -1,94 +1,144 @@
-# Implementation Plan: Authentication Shell & Maternal Onboarding (Phase 1 & 2)
+# Implementation Plan: Daily Breastfeeding Tracking Engine (Phase 3)
 
-We will now implement the security backbone and onboarding layers for **asiTrack**. This includes configuring Auth.js (NextAuth.js v5) with separate credentials systems for mothers and administrators, setting up a resilient middleware guard for Role-Based Access Control (RBAC), seeding the database with initial templates and a super admin, and constructing modern, mobile-friendly authentication and onboarding views in warm Indonesian copy.
+We will now implement the core functional core of **asiTrack**: the **Daily Breastfeeding Tracking Engine**. This phase translates maternal clinical logic into a highly automated, supportive, and resilient calendar checking system. 
+
+It calculates lactation days index (`hari_ke`) under WIB timezone enforcement, handles out-of-order daily card backfilling, and implements the smart milestone auto-fill mechanism (completing days up to 7 with "ya" if the mother's primary milestone question "Apakah ASI sudah keluar?" is answered "ya").
 
 ---
 
-## 🔒 Security & Authentication Architecture
+## 🎯 Phase 3 Goals
 
-We are utilizing **NextAuth.js v5 (Auth.js)**, configured with a dual Credentials Provider scheme. This supports a unified session interface where users have a `role` of `"user"` and administrators have a `role` of `"admin"` or `"super_admin"`.
+1. **Precision WIB Tracking Engine**: Build robust server and client timezone-aware date calculations so that day boundaries align perfectly with Asia/Jakarta time (UTC+7), preventing timezone drift or "skipped/future" days.
+2. **Flexible Backfilling**: Allow postnatal mothers to backfill missed tracking days out-of-order via separate dashboard card cues.
+3. **Lactation Milestone Automation**: Auto-complete remaining days up to Day 7 when the primary question is answered "ya", transitioning the dashboard to a supportive celebration view.
+4. **Comprehensive UI Forms & Timeline**: Design beautiful, modern mobile components for form checking (`/form`), active/past tracking timelines, and a review log (`/form/history`).
 
-### 1. Dual Credentials Providers
-- **`user-credentials`**: Authenticates mothers against the `users` collection in MongoDB. Validates lowercase alphanumeric `username` and hashes password inputs.
-- **`admin-credentials`**: Authenticates administrators against the `admins` collection in MongoDB. Validates administrative role privileges.
+---
 
-### 2. Password Security
-- We will install `bcryptjs` and `@types/bcryptjs` to handle salt generation and hashing securely without relying on platform-specific C/C++ compilation.
-- Password hashes will be safely validated using `bcryptjs.compare()` in the NextAuth `authorize` handler.
+## 📐 1. WIB Timezone & Calendar Logic
 
-### 3. Middleware Route Protection (`middleware.ts`)
-We will create a global middleware that checks session validation and enforces the following RBAC permissions:
-- **Client App Pages** (`/dashboard`, `/profile`, `/form/*`, `/pojok-baca/*`, `/video/*`, `/onboarding`): Strictly requires a session with `role: "user"`.
-- **Administrative Pages** (`/admin/*`, except `/admin/login`): Requires a session with `role: "admin"` or `role: "super_admin"`.
-- **Super-Admin Action Pages** (`/admin/admins`): Strictly requires `role: "super_admin"`.
-- **Public & Authentication Pages** (`/`, `/auth/login`, `/auth/signup`, `/admin/login`): Publicly accessible. If an authenticated user accesses them, they will be redirected to their respective dashboards.
+To enforce **WIB (Asia/Jakarta)** calculations:
+* **Day 1 definition**: The day **after** childbirth date (`tgl_melahirkan`). E.g. born May 21 WIB ➡️ May 22 WIB is Day 1 of tracking.
+* **Storing dates**: The delivery date (`tgl_melahirkan`) and all daily `response_date` values are stored in MongoDB normalized to **start of day in WIB** (e.g. `2026-05-21T00:00:00+07:00`).
+* **Day index calculation**:
+  ```typescript
+  import { utcToZonedTime } from 'date-fns-tz';
+  import { differenceInDays, startOfDay } from 'date-fns';
+
+  const TIMEZONE = "Asia/Jakarta";
+  const todayWIB = startOfDay(utcToZonedTime(new Date(), TIMEZONE));
+  const birthWIB = startOfDay(utcToZonedTime(user.tgl_melahirkan, TIMEZONE));
+  const currentHariKe = differenceInDays(todayWIB, birthWIB);
+  ```
+
+---
+
+## 🗄️ 2. Proposed REST API Endpoints
+
+### Endpoint A: `GET /api/responses/state`
+Resolves the user's tracking schedule, checking what forms are unanswered or completed.
+
+* **Security**: Role `"user"` check.
+* **Logic**:
+  1. Calculate `currentHariKe`.
+  2. Query all existing `Response` documents for this user in the range `hari_ke` 1 to 7.
+  3. Check if the user has answered `"ya"` to the **Primary Question** on *any* day `N <= 7`. If yes, mark the entire program as **completed** (milestone achieved).
+  4. Fetch active questions from `questions` collection.
+  5. Identify missing tracking days in the range `[1, min(currentHariKe, 7)]` that have no answers recorded.
+* **Response payload**:
+  ```json
+  {
+    "status": "success",
+    "currentHariKe": 3,
+    "completed": false,
+    "milestoneDay": null,
+    "pendingDays": [2, 3],
+    "questions": [
+      { "_id": "...", "pertanyaan": "Apakah ASI sudah keluar?", "tipe": "yes_no", "is_primary": true }
+    ],
+    "history": [
+      { "hari_ke": 1, "answers": [{ "question_id": "...", "jawaban": "tidak", "auto_filled": false }] }
+    ]
+  }
+  ```
+
+### Endpoint B: `POST /api/responses`
+Receives questionnaire answers for a specific `hari_ke` and performs automation checks.
+
+* **Payload**:
+  ```json
+  {
+    "hari_ke": 2,
+    "answers": [
+      { "question_id": "60a8f9024f90bf70d880cb12", "jawaban": "ya" }
+    ]
+  }
+  ```
+* **Logic**:
+  1. Validate that the targeted `hari_ke` satisfies: `1 <= hari_ke <= min(currentHariKe, 7)`.
+  2. Compute `response_date = addDays(birthWIB, hari_ke)`.
+  3. Check for duplicates in DB. If exists, overwrite (ensures idempotency).
+  4. Save answers to `responses` collection.
+  5. **Auto-Fill Milestone Check**:
+     * If the answered question is the **Primary Question** (`is_primary: true`) and the answer is `"ya"`:
+       * Trigger the backfill automation: for all remaining days `D` from `hari_ke + 1` to `7`, write a response for the primary question with `jawaban: "ya"`, `auto_filled: true`, and the corresponding `response_date`.
+  6. Return success status and trigger UI revalidation.
 
 ---
 
 ## 🛠️ Proposed Changes
 
-### NextAuth Configurations
-#### [NEW] [auth.ts](file:///d:/proj/asiTrack/src/auth.ts)
-- NextAuth initialization entry point. Exports standard API handlers, `auth`, `signIn`, and `signOut` helper functions.
+### Database & APIs
+#### [NEW] [route.ts](file:///d:/Walaho/asiTrack/src/app/api/responses/state/route.ts)
+- Computes `hari_ke` relative to the logged-in user's childbirth date. Retrieves response histories and resolves pending tracking days.
 
-#### [NEW] [config.ts](file:///d:/proj/asiTrack/src/lib/auth/config.ts)
-- Main AuthOptions declaration. Defines providers, token callbacks, and custom JWT payload injection for `id` and `role`.
-
-#### [NEW] [middleware.ts](file:///d:/proj/asiTrack/middleware.ts)
-- Route guard intercepting all Next.js page requests to enforce RBAC rules.
+#### [NEW] [route.ts](file:///d:/Walaho/asiTrack/src/app/api/responses/route.ts)
+- Receives daily answers, enforces unique keys, and implements the **Primary Question Auto-Fill** laktasi milestone cascade.
 
 ---
 
-### Database Seeding
-#### [NEW] [route.ts](file:///d:/proj/asiTrack/src/app/api/db-seed/route.ts)
-- Create an idempotent API endpoint `/api/db-seed` to safely seed:
-  1. **1x Super Admin Account**: Username `admin`, password `adminasi123` (hashed with `bcryptjs`), and role `"super_admin"`.
-  2. **1x Active Primary Question**: Questions template schema with `"Apakah ASI sudah keluar?"` marked as `is_primary: true` and `active: true`.
-  3. **3x Default Notification Reminders**: One active template for each slot (`morning`, `afternoon`, `evening`).
+### UI/UX Client Components
+
+#### [MODIFY] [page.tsx](file:///d:/Walaho/asiTrack/src/app/%28user%29/dashboard/page.tsx)
+- Connects to `/api/responses/state` with live loaders.
+- Displays a prominent welcome, dynamic 7-day laktasi timeline with interactive badges, and:
+  * **Celebrate Case**: If milestone is completed, render a premium glassmorphic congratulations card ("ASI Bunda Sudah Lancar!") with warm, supportive Indonesian notes.
+  * **Fill Case**: If today is active and pending, show a clean, micro-animated daily form widget with soft violet styles.
+  * **Upcoming Case**: If today is completed but next day is not active yet (future), display a countdown or encouragement card.
+
+#### [NEW] [page.tsx](file:///d:/Walaho/asiTrack/src/app/%28user%29/form/page.tsx)
+- Mobile-first interactive portal.
+- Displays beautiful individual card items for each **Pending Day** (backfill support). 
+- Mothers can click any card (e.g. "Lengkapi Hari ke-2") to expand a modal questionnaire to record answers out-of-order.
+
+#### [NEW] [page.tsx](file:///d:/Walaho/asiTrack/src/app/%28user%29/form/history/page.tsx)
+- History log displaying 7-day entries.
+- Clearly separates filled vs auto-filled badges using beautiful colors (e.g. green for filled, soft purple/gold for auto-filled milestones).
 
 ---
 
-### UI/UX Page Shells & Views
+## 📐 Open Questions & Decisions for Review
 
-We will establish a mobile-first user flow and move the current mock dashboard from the public root to `/dashboard` to make room for a welcoming landing page.
-
-#### [MODIFY] [page.tsx](file:///d:/proj/asiTrack/src/app/%28user%29/page.tsx) -> Move to [dashboard/page.tsx](file:///d:/proj/asiTrack/src/app/%28user%29/dashboard/page.tsx)
-- Reposition user dashboard to a protected route `/dashboard`.
-
-#### [NEW] [page.tsx](file:///d:/proj/asiTrack/src/app/page.tsx)
-- Create a beautiful public landing page `/` introducing **asiTrack** with soft violet theme styling, illustration placement, and modern action buttons leading to Sign Up and Login.
-
-#### [NEW] [page.tsx](file:///d:/proj/asiTrack/src/app/auth/login/page.tsx)
-- Mobile-optimized login view supporting Indonesian prompts. Includes username/password input and transitions to the client dashboard upon successful validation.
-
-#### [NEW] [page.tsx](file:///d:/proj/asiTrack/src/app/auth/signup/page.tsx)
-- Registration form for postnatal mothers. Incorporates robust input validation for `nama_lengkap`, `username`, and `tgl_melahirkan`.
-
-#### [NEW] [page.tsx](file:///d:/proj/asiTrack/src/app/%28user%29/onboarding/page.tsx)
-- Interactive profile onboarding page collecting additional details (usia, anak_ke_berapa, alamat, pendidikan, pekerjaan) and enabling client mock push notification permissions.
-
-#### [NEW] [page.tsx](file:///d:/proj/asiTrack/src/app/admin/login/page.tsx)
-- Minimalist administrative login portal.
-
----
-
-## 📐 Open Questions for User Review
-
-> [!IMPORTANT]
-> **1. Seed Admin Credentials**:
-> For local database setup, is seeding a default super admin with username `admin` and password `adminasi123` acceptable? (You will be prompted to change this immediately upon deployment).
+> [!NOTE]
+> **1. Handling Overwrites on Backfill:**
+> If a mother previously backfilled Day 3 with `"tidak"`, but on Day 2 she submits `"ya"` (which triggers the auto-fill of days 3-7 to `"ya"`), we will overwrite Day 3's primary question to `"ya"` to reflect that lactogenesis was achieved and continues. Is this cascade correct? (Our default implementation: Yes, milestone achieved overwrites subsequent days to ensure consistency).
 >
-> **2. Password Hashing Tool**:
-> Using `bcryptjs` for standard salt factors is our default recommendation. It compiles 100% in pure JS, eliminating native node-gyp prebuild crashes on Windows. Is there any objection to installing this library?
+> **2. Completion Screen Options:**
+> Once completed, the mother will no longer see questionnaire forms. Do you agree that they should see their full historical log, educational articles, and short therapy/relaxation videos instead?
 
 ---
 
 ## 🔬 Verification Plan
 
-### Automated Tests
-- Run `npm run build` to verify Next.js static validation compiles without TypeScript or next-auth compilation warnings.
-- Call the `/api/db-seed` dynamic route to verify MongoDB collection seeding.
+### Automated Verification
+* **Type-safety check**: Run `npm run build` to verify proper interface types for responses, users, and mongoose queries.
+* **Idempotence & Constraint testing**: Submit the same form multiple times to verify Mongoose compounds on `{ user_id, question_id, response_date }` update correctly rather than producing duplicate index crashes.
 
 ### Manual Verification
-- Test unauthenticated requests to `/dashboard` to verify they redirect to `/auth/login`.
-- Verify credentials routing paths (mothers are redirected to `/dashboard`, admins to `/admin`).
+* **Normal Signup Tracking**:
+  * Set `tgl_melahirkan` to yesterday. Verify that the dashboard computes `currentHariKe = 1`.
+  * Answer `"tidak"` to the primary question. Verify that Day 1 shows as completed, and Day 2 remains locked.
+* **Milestone Auto-Fill Tracking**:
+  * Submit `"ya"` for Day 1.
+  * Verify that Day 1 is saved, and Days 2-7 are immediately written with `"ya"` and `auto_filled: true`.
+  * Open `/form/history` to verify all 7 days show successful badge logs.

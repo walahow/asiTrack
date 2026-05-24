@@ -5,7 +5,7 @@ import { auth } from "@/auth";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -17,9 +17,10 @@ export async function GET(
     }
 
     await dbConnect();
+    const { id } = await context.params;
     
     // Allow seeing a published article
-    const article = await Article.findOne({ _id: params.id, published: true })
+    const article = await Article.findOne({ _id: id, published: true })
       .select("-__v");
 
     if (!article) {

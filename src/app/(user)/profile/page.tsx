@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { signOut } from "next-auth/react";
-import { User as UserIcon, Bell, Settings, LogOut, ChevronRight, Edit3, X, Check, Calendar, Mail, BookOpen, Briefcase, MapPin, Award } from "lucide-react";
+import { User as UserIcon, Bell, Settings, LogOut, ChevronRight, Edit3, X, Check, Calendar, Mail, BookOpen, Briefcase, MapPin, Award, ShieldAlert } from "lucide-react";
+import BadgeIcon from "@/components/user/BadgeIcon";
 
 interface UserProfile {
   nama_lengkap: string;
@@ -20,6 +21,7 @@ export default function ProfilePage() {
   const [showToast, setShowToast] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [profileFullyFilled, setProfileFullyFilled] = useState(true);
 
   const [profile, setProfile] = useState<UserProfile>({
     nama_lengkap: "",
@@ -54,6 +56,7 @@ export default function ProfilePage() {
           };
           setProfile(loadedProfile);
           setTempProfile(loadedProfile);
+          setProfileFullyFilled(!!data.profile_fully_filled);
         } else {
           setError(data.message || "Gagal mengambil data profil.");
         }
@@ -134,6 +137,19 @@ export default function ProfilePage() {
       setProfile({ ...tempProfile });
       setIsEditing(false);
       
+      // Re-evaluate if fully filled locally to update warning immediately
+      const isFullyFilled = !!(
+        tempProfile.nama_lengkap &&
+        tempProfile.username &&
+        tempProfile.tgl_melahirkan &&
+        tempProfile.usia !== undefined && tempProfile.usia !== null &&
+        tempProfile.anak_ke_berapa !== undefined && tempProfile.anak_ke_berapa !== null &&
+        tempProfile.alamat && tempProfile.alamat.trim() !== "" &&
+        tempProfile.pendidikan && tempProfile.pendidikan.trim() !== "" &&
+        tempProfile.pekerjaan && tempProfile.pekerjaan.trim() !== ""
+      );
+      setProfileFullyFilled(isFullyFilled);
+
       // Show beautiful custom success toast
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
@@ -179,12 +195,25 @@ export default function ProfilePage() {
         </div>
       )}
 
-      <header className="mb-8 flex items-center justify-between">
+      <header className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-4xl font-bold text-gray-800 tracking-tight mb-2">Profil Bunda</h1>
           <p className="text-gray-500 font-medium">Kelola data & preferensi laktasi</p>
         </div>
       </header>
+
+      {/* Profile Incomplete Warning Banner */}
+      {!profileFullyFilled && (
+        <div className="mb-6 p-4 bg-rose-50 border border-rose-100 rounded-[1.5rem] flex items-start gap-3 text-rose-600 animate-pulse">
+          <ShieldAlert size={20} className="shrink-0 mt-0.5" />
+          <div className="space-y-0.5">
+            <h4 className="text-xs font-bold leading-normal">Lengkapi Profil Anda 🌸</h4>
+            <p className="text-[10px] text-rose-500 font-semibold leading-normal">
+              Harap lengkapi Usia, Anak ke-berapa, Alamat, Pendidikan, dan Pekerjaan Bunda agar sistem pendampingan laktasi berjalan lebih personal.
+            </p>
+          </div>
+        </div>
+      )}
 
       <main className="space-y-6 flex-1">
         
@@ -277,7 +306,11 @@ export default function ProfilePage() {
           >
             <div className="flex items-center gap-4 text-gray-700">
               <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center group-hover:scale-105 transition-transform">
-                <Settings size={22} />
+                <BadgeIcon 
+                  icon={Settings} 
+                  showBadge={!profileFullyFilled} 
+                  size={22} 
+                />
               </div>
               <span className="font-bold text-lg">Ubah Profil</span>
             </div>

@@ -5,21 +5,37 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Orbit, Home, BookOpen, PlayCircle, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import BadgeIcon from "./BadgeIcon";
 
 export default function FabNav() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const [showWarningDot, setShowWarningDot] = useState(false);
 
-  // Close menu when route changes
+  // Close menu when route changes and fetch profile completion status
   useEffect(() => {
     setIsOpen(false);
+    
+    async function checkProfileStatus() {
+      try {
+        const res = await fetch("/api/user/profile");
+        const data = await res.json();
+        if (res.ok && data.status === "success") {
+          // If profile is NOT fully filled, show warning dot!
+          setShowWarningDot(!data.profile_fully_filled);
+        }
+      } catch (err) {
+        console.error("Failed to check profile completion status in FabNav", err);
+      }
+    }
+    checkProfileStatus();
   }, [pathname]);
 
   const navItems = [
     { name: "Profil", href: "/profile", icon: User },
     { name: "Video", href: "/video", icon: PlayCircle },
     { name: "Artikel", href: "/pojok-baca", icon: BookOpen },
-    { name: "Beranda", href: "/", icon: Home },
+    { name: "Beranda", href: "/dashboard", icon: Home },
   ];
 
   return (
@@ -61,7 +77,11 @@ export default function FabNav() {
                     isActive ? "bg-primary text-white" : "bg-white text-primary"
                   )}
                 >
-                  <Icon size={20} />
+                  <BadgeIcon 
+                    icon={Icon} 
+                    showBadge={item.name === "Profil" && showWarningDot} 
+                    size={20} 
+                  />
                 </Link>
               </div>
             );
@@ -72,11 +92,15 @@ export default function FabNav() {
         <button 
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
-            "w-14 h-14 rounded-full flex items-center justify-center shadow-xl shadow-primary/30 transition-all duration-500",
+            "w-14 h-14 rounded-full flex items-center justify-center shadow-xl shadow-primary/30 transition-all duration-500 relative",
             isOpen ? "bg-white text-primary rotate-180" : "bg-primary text-white"
           )}
         >
-          <Orbit size={28} strokeWidth={2} />
+          <BadgeIcon 
+            icon={Orbit} 
+            showBadge={!isOpen && showWarningDot} 
+            size={28} 
+          />
         </button>
       </div>
     </>

@@ -23,10 +23,22 @@ export async function GET() {
         { status: 404 }
       );
     }
+    
+    const profile_fully_filled = !!(
+      user.nama_lengkap &&
+      user.username &&
+      user.tgl_melahirkan &&
+      user.usia !== undefined && user.usia !== null &&
+      user.anak_ke_berapa !== undefined && user.anak_ke_berapa !== null &&
+      user.alamat && user.alamat.trim() !== "" &&
+      user.pendidikan && user.pendidikan.trim() !== "" &&
+      user.pekerjaan && user.pekerjaan.trim() !== ""
+    );
 
     return NextResponse.json({
       status: "success",
       user,
+      profile_fully_filled,
     });
   } catch (error: any) {
     console.error("Profile fetch error:", error);

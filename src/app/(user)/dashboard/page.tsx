@@ -129,7 +129,7 @@ export default function DashboardHome() {
     return (
       <div className="flex flex-col flex-1 items-center justify-center p-6 min-h-screen bg-[#FAF8F5]">
         <div className="relative w-16 h-16 animate-bounce mb-4">
-          <Image src="/logo.png" alt="Loading Logo" fill className="object-contain" />
+          <Image src="/logo.png" alt="Loading Logo" fill sizes="64px" priority className="object-contain" />
         </div>
         <p className="text-sm font-bold text-gray-500 animate-pulse">Menghubungkan Laktasi Bunda...</p>
       </div>

@@ -74,6 +74,7 @@ export default function OnboardingPage() {
             fill
             sizes="40px"
             className="object-contain p-1"
+            priority
           />
         </div>
         <span className="font-bold text-lg tracking-tight text-primary font-sans">

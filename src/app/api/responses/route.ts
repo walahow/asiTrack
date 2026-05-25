@@ -164,6 +164,13 @@ export async function POST(request: Request) {
     });
   } catch (error: any) {
     console.error("Failed to save responses:", error);
+    try {
+      const fs = require("fs");
+      const logContent = `[${new Date().toISOString()}] POST /api/responses 500 error: ${error.message}\nStack: ${error.stack}\n\n`;
+      fs.appendFileSync("error.log", logContent, "utf8");
+    } catch (logErr) {
+      console.error("Failed to write to error.log", logErr);
+    }
     return NextResponse.json(
       { status: "error", message: error.message || "Gagal menyimpan jawaban" },
       { status: 500 }

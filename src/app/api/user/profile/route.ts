@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { dbConnect } from "@/lib/db/mongoose";
 import User from "@/models/User";
+import Response from "@/models/Response";
 
 export async function GET() {
   try {
@@ -169,6 +170,28 @@ export async function PUT(request: Request) {
         { status: "error", message: "Pengguna tidak ditemukan" },
         { status: 404 }
       );
+    }
+
+    // Realignment of existing response dates if tgl_melahirkan was updated
+    if (tgl_melahirkan !== undefined) {
+      try {
+        const userResponses = await Response.find({ user_id: userId });
+        if (userResponses.length > 0) {
+          const TIMEZONE_OFFSET = 7 * 60 * 60 * 1000; // +7 hours for WIB
+          const birthDateUTC = new Date(updatedUser.tgl_melahirkan);
+          const birthWIBStart = new Date(birthDateUTC.getTime() + TIMEZONE_OFFSET);
+
+          for (const r of userResponses) {
+            const responseDateWIB = new Date(birthWIBStart);
+            responseDateWIB.setUTCDate(responseDateWIB.getUTCDate() + Number(r.hari_ke));
+            r.response_date = new Date(responseDateWIB.getTime() - TIMEZONE_OFFSET);
+            await r.save();
+          }
+          console.log(`Successfully realigned ${userResponses.length} response dates for user ${userId} following delivery date update.`);
+        }
+      } catch (alignErr) {
+        console.error("Failed to realign response dates on profile birthdate change:", alignErr);
+      }
     }
 
     return NextResponse.json({

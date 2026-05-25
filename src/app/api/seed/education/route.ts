@@ -70,7 +70,14 @@ export async function GET() {
     await Article.insertMany(articles);
 
     // --- SEED VIDEOS ---
-    const videos = [
+    const videos: Array<{
+      title: string;
+      youtube_url: string;
+      kategori: "relaksasi" | "terapi";
+      deskripsi: string;
+      published: boolean;
+      created_by: any;
+    }> = [
       {
         title: "Musik Relaksasi Gelombang Delta untuk Ibu Hamil & Menyusui",
         youtube_url: "https://www.youtube.com/watch?v=FjHGZj2IjKd", // Placeholder example url

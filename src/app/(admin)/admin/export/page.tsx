@@ -1,25 +1,21 @@
 "use client";
 
+import { useState } from "react";
 import { Download, Filter, FileSpreadsheet } from "lucide-react";
-import Papa from "papaparse";
 
 export default function AdminExport() {
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [pendidikan, setPendidikan] = useState("");
+
   const handleExport = () => {
-    // Placeholder logic for exporting CSV
-    const dummyData = [
-      { nama_lengkap: "Bunda Budi", tgl_melahirkan: "2026-05-18", hari_ke: 3, jawaban: "ya", auto_filled: "false" },
-      { nama_lengkap: "Bunda Ayu", tgl_melahirkan: "2026-05-20", hari_ke: 1, jawaban: "tidak", auto_filled: "false" },
-    ];
+    const params = new URLSearchParams();
+    if (dateFrom) params.append("dateFrom", dateFrom);
+    if (dateTo) params.append("dateTo", dateTo);
+    if (pendidikan) params.append("pendidikan", pendidikan);
     
-    const csv = Papa.unparse(dummyData);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", `asiTrack_export_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Trigger download via our new API endpoint
+    window.location.href = `/api/admin/export?${params.toString()}`;
   };
 
   return (
@@ -39,17 +35,36 @@ export default function AdminExport() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Periode Tanggal Melahirkan</label>
             <div className="flex gap-2">
-              <input type="date" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none" />
+              <input 
+                type="date" 
+                value={dateFrom}
+                onChange={(e) => setDateFrom(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none" 
+              />
               <span className="self-center text-gray-400">-</span>
-              <input type="date" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none" />
+              <input 
+                type="date" 
+                value={dateTo}
+                onChange={(e) => setDateTo(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none" 
+              />
             </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Filter Pendidikan</label>
-            <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none">
+            <select 
+              value={pendidikan}
+              onChange={(e) => setPendidikan(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none"
+            >
               <option value="">Semua Pendidikan</option>
+              <option value="SD">SD</option>
+              <option value="SMP">SMP</option>
               <option value="SMA">SMA</option>
+              <option value="D3">D3</option>
               <option value="S1">S1</option>
+              <option value="S2">S2</option>
+              <option value="S3">S3</option>
             </select>
           </div>
         </div>
@@ -61,7 +76,7 @@ export default function AdminExport() {
             </div>
             <div>
               <h3 className="font-bold text-gray-800">Siap untuk diunduh</h3>
-              <p className="text-sm text-gray-600">Berdasarkan filter, terdapat 124 data yang siap diexport.</p>
+              <p className="text-sm text-gray-600">Tekan tombol di samping untuk mulai mengunduh file CSV.</p>
             </div>
           </div>
           <button 

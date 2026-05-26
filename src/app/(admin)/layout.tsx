@@ -11,6 +11,7 @@ import {
   LogOut 
 } from "lucide-react";
 import MobileAdminNav from "@/components/admin/MobileAdminNav";
+import DesktopAdminLogoutButton from "@/components/admin/DesktopAdminLogoutButton";
 
 export default async function AdminLayout({
   children,
@@ -68,10 +69,7 @@ export default async function AdminLayout({
         </nav>
 
         <div className="p-4 border-t border-gray-200">
-          <button className="flex items-center gap-3 px-3 py-2 w-full text-red-600 hover:bg-red-50 rounded-md transition-colors font-medium">
-            <LogOut size={20} />
-            Logout
-          </button>
+          <DesktopAdminLogoutButton />
         </div>
       </aside>
 

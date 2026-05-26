@@ -79,7 +79,13 @@ export default function MobileAdminNav() {
           </nav>
           
           <div className="p-6 border-t border-gray-100 bg-white">
-            <button className="flex items-center justify-center gap-3 px-4 py-3.5 w-full bg-red-50 text-red-600 rounded-xl transition-colors font-bold hover:bg-red-100">
+            <button 
+              onClick={async () => {
+                const { signOut } = await import("next-auth/react");
+                await signOut({ callbackUrl: "/admin/login" });
+              }}
+              className="flex items-center justify-center gap-3 px-4 py-3.5 w-full bg-red-50 text-red-600 rounded-xl transition-colors font-bold hover:bg-red-100"
+            >
               <LogOut size={22} />
               Logout dari Portal
             </button>

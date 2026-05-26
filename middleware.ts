@@ -47,7 +47,7 @@ export default auth((req) => {
   }
 
   // Authenticated users trying to access public/login pages
-  if (isLoggedIn && (pathname === "/" || pathname === "/auth/login" || pathname === "/auth/signup")) {
+  if (isLoggedIn && (pathname === "/auth/login" || pathname === "/auth/signup")) {
     if (req.auth?.user?.role === "admin" || req.auth?.user?.role === "super_admin") {
       return NextResponse.redirect(new URL("/admin", req.nextUrl));
     }

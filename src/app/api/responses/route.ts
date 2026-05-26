@@ -121,37 +121,6 @@ export async function POST(request: Request) {
         );
       }
 
-      // B. Auto-fill previous missed/unanswered days [1, N-1]
-      for (let d = 1; d < currentN; d++) {
-        const existingResponse = await Response.findOne({
-          user_id: user._id,
-          hari_ke: d,
-        });
-
-        // Only backfill if the mother completely missed this day
-        if (!existingResponse) {
-          const autoDateWIB = new Date(birthWIBStart);
-          autoDateWIB.setUTCDate(autoDateWIB.getUTCDate() + d);
-          const autoDateStorage = new Date(autoDateWIB.getTime() - TIMEZONE_OFFSET);
-
-          await Response.findOneAndUpdate(
-            {
-              user_id: user._id,
-              question_id: primaryQuestionId,
-              hari_ke: d,
-            },
-            {
-              jawaban: "ya",
-              response_date: autoDateStorage,
-              auto_filled: true,
-            },
-            {
-              upsert: true,
-              new: true,
-            }
-          );
-        }
-      }
     }
 
     return NextResponse.json({

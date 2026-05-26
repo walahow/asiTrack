@@ -46,6 +46,12 @@ export default function DashboardHome() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [submitSuccess, setSubmitSuccess] = useState("");
+  
+  // Multistep wizard states
+  const [currentQIndex, setCurrentQIndex] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [tempText, setTempText] = useState("");
 
   const fetchData = async () => {
     try {
@@ -59,13 +65,14 @@ export default function DashboardHome() {
 
       if (stateData.status === "success" && questionsData.status === "success") {
         setState(stateData.data);
-        setQuestions(questionsData.data);
         
-        // Extract the primary question for the daily check-in card
-        const primary = questionsData.data.find((q: Question) => q.is_primary);
-        if (primary) {
-          setPrimaryQ(primary);
-        }
+        // Sort questions so that the primary milestone question is ALWAYS first, followed by order
+        const sortedQuestions = [...questionsData.data].sort((a, b) => {
+          if (a.is_primary) return -1;
+          if (b.is_primary) return 1;
+          return a.order - b.order;
+        });
+        setQuestions(sortedQuestions);
       } else {
         setError("Gagal memuat status pelacakan.");
       }
@@ -80,21 +87,44 @@ export default function DashboardHome() {
     fetchData();
   }, []);
 
-  const handleAnswerSubmit = async (jawaban: string) => {
-    if (!primaryQ || !state) return;
-    setSubmitting(false);
+  const handleNext = (questionId: string, jawaban: string) => {
+    if (!jawaban.trim()) return;
+    
+    const newAnswers = { ...answers, [questionId]: jawaban };
+    setAnswers(newAnswers);
+    setTempText("");
+    
+    const currentQuestion = questions[currentQIndex];
+    
+    // If this is the primary question, and the answer is NOT "ya", skip remaining secondary questions
+    if (currentQuestion.is_primary && jawaban.toLowerCase() !== "ya") {
+      submitAllAnswers(newAnswers);
+      return;
+    }
+    
+    if (currentQIndex < questions.length - 1) {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setCurrentQIndex(currentQIndex + 1);
+        setIsAnimating(false);
+      }, 300);
+    } else {
+      submitAllAnswers(newAnswers);
+    }
+  };
+
+  const submitAllAnswers = async (finalAnswers: Record<string, string>) => {
+    if (!state) return;
+    setSubmitting(true);
     setSubmitError("");
     setSubmitSuccess("");
-    setSubmitting(true);
 
     const payload = {
       hari_ke: state.currentHariKe,
-      answers: [
-        {
-          question_id: primaryQ._id,
-          jawaban,
-        },
-      ],
+      answers: Object.entries(finalAnswers).map(([question_id, jawaban]) => ({
+        question_id,
+        jawaban,
+      })),
     };
 
     try {
@@ -110,14 +140,16 @@ export default function DashboardHome() {
         throw new Error(data.message || "Gagal menyimpan jawaban.");
       }
 
-      setSubmitSuccess(data.message || "Jawaban berhasil disimpan!");
+      setSubmitSuccess(data.message || "Laporan berhasil disimpan!");
       
       // Reload state after short delay
       setTimeout(async () => {
         setLoading(true);
         await fetchData();
+        setCurrentQIndex(0);
+        setAnswers({});
         setSubmitSuccess("");
-        setLoading(false);
+        setSubmitting(false);
       }, 1500);
     } catch (err: any) {
       setSubmitError(err.message || "Terjadi kesalahan koneksi.");
@@ -335,33 +367,75 @@ export default function DashboardHome() {
                 </div>
               )}
 
-              <h2 className="text-2xl font-black text-gray-800 leading-snug mb-8">
-                {primaryQ ? primaryQ.pertanyaan : "Apakah ASI sudah mulai keluar hari ini?"}
-              </h2>
-              
-              <div className="flex flex-col gap-3">
-                <button
-                  onClick={() => handleAnswerSubmit("ya")}
-                  disabled={submitting}
-                  className="w-full flex items-center justify-between bg-primary text-white py-4 px-6 rounded-2xl font-bold shadow-[0_8px_20px_rgba(167,139,250,0.3)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:scale-100 transition-all duration-300 cursor-pointer"
-                >
-                  <span className="text-xs">Ya, Sudah Keluar</span>
-                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
-                    <Check size={16} />
+              {questions.length > 0 && currentQIndex < questions.length ? (
+                <div className={`transition-all duration-300 transform ${isAnimating ? "opacity-0 -translate-x-4" : "opacity-100 translate-x-0"}`}>
+                  {!questions[currentQIndex].is_primary && (
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                        Pertanyaan Tambahan {currentQIndex} / {questions.length - 1}
+                      </span>
+                      <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-primary transition-all duration-500 rounded-full" style={{ width: `${(currentQIndex / (questions.length - 1)) * 100}%` }} />
+                      </div>
+                    </div>
+                  )}
+                  <h2 className="text-2xl font-black text-gray-800 leading-snug mb-8">
+                    {questions[currentQIndex].pertanyaan}
+                  </h2>
+                  
+                  {questions[currentQIndex].tipe === "yes_no" ? (
+                    <div className="flex flex-col gap-3">
+                      <button
+                        onClick={() => handleNext(questions[currentQIndex]._id, "ya")}
+                        disabled={submitting || isAnimating}
+                        className="w-full flex items-center justify-between bg-primary text-white py-4 px-6 rounded-2xl font-bold shadow-[0_8px_20px_rgba(167,139,250,0.3)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:scale-100 transition-all duration-300 cursor-pointer"
+                      >
+                        <span className="text-xs">Ya, Benar</span>
+                        <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                          <Check size={16} />
+                        </div>
+                      </button>
+                      
+                      <button
+                        onClick={() => handleNext(questions[currentQIndex]._id, "tidak")}
+                        disabled={submitting || isAnimating}
+                        className="w-full flex items-center justify-between bg-gray-50 text-gray-600 border border-gray-100 py-4 px-6 rounded-2xl font-bold hover:bg-gray-100 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:scale-100 transition-all duration-300 cursor-pointer"
+                      >
+                        <span className="text-xs">Belum / Tidak</span>
+                        <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-400">
+                          <X size={16} />
+                        </div>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-3">
+                      <textarea
+                        rows={3}
+                        placeholder="Tuliskan jawaban Bunda di sini..."
+                        value={tempText}
+                        onChange={(e) => setTempText(e.target.value)}
+                        className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-medium text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-all placeholder:text-gray-400 resize-none"
+                      />
+                      <button
+                        onClick={() => handleNext(questions[currentQIndex]._id, tempText)}
+                        disabled={submitting || isAnimating || !tempText.trim()}
+                        className="w-full flex items-center justify-center gap-2 bg-primary text-white py-4 px-6 rounded-2xl font-bold shadow-[0_8px_20px_rgba(167,139,250,0.3)] hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:scale-100 transition-all duration-300 cursor-pointer"
+                      >
+                        <span className="text-xs">Lanjut</span>
+                        <Check size={16} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4 animate-pulse">
+                    <CheckCircle2 size={32} />
                   </div>
-                </button>
-                
-                <button
-                  onClick={() => handleAnswerSubmit("tidak")}
-                  disabled={submitting}
-                  className="w-full flex items-center justify-between bg-gray-50 text-gray-600 border border-gray-100 py-4 px-6 rounded-2xl font-bold hover:bg-gray-100 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:scale-100 transition-all duration-300 cursor-pointer"
-                >
-                  <span className="text-xs">Belum Keluar</span>
-                  <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-400">
-                    <X size={16} />
-                  </div>
-                </button>
-              </div>
+                  <h2 className="text-xl font-bold text-gray-800 mb-2">Semua Terjawab!</h2>
+                  <p className="text-xs text-gray-500">Menyimpan catatan Bunda...</p>
+                </div>
+              )}
             </div>
           </section>
         )}

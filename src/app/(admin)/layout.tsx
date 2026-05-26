@@ -1,5 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 import { 
   LayoutDashboard, 
   FileText, 
@@ -9,11 +11,17 @@ import {
   LogOut 
 } from "lucide-react";
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Server-side auth guard — second layer of defense
+  const session = await auth();
+  if (!session?.user || (session.user.role !== "admin" && session.user.role !== "super_admin")) {
+    redirect("/admin/login");
+  }
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}

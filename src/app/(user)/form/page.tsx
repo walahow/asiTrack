@@ -48,12 +48,18 @@ export default function FormPage() {
       setState(stateData.data);
 
       // 2. Fetch questions
-      const questionsRes = await fetch("/api/questions");
+      const questionsRes = await fetch("/api/questions", { cache: "no-store" });
       const questionsData = await questionsRes.json();
       if (questionsData.status !== "success") {
         throw new Error(questionsData.message || "Gagal memuat formulir kuesioner.");
       }
-      setQuestions(questionsData.data);
+      
+      const sortedQuestions = [...questionsData.data].sort((a, b) => {
+        if (a.is_primary) return -1;
+        if (b.is_primary) return 1;
+        return a.order - b.order;
+      });
+      setQuestions(sortedQuestions);
     } catch (err: any) {
       setError(err.message || "Koneksi terputus. Pastikan database aktif.");
     } finally {
@@ -193,15 +199,30 @@ export default function FormPage() {
           Formulir <span className="text-primary">Laktasi Harian</span>
         </h1>
         <p className="text-xs text-gray-500 mt-1 font-semibold leading-relaxed">
-          {pendingDays.length === 0 
-            ? "Luar biasa Bunda! Semua laporan pelacakan laktasi terisi penuh." 
-            : `Terdapat ${pendingDays.length} laporan harian yang perlu diisi.`}
+          {state.currentHariKe < 1 
+            ? "Pelacakan laktasi Hari ke-1 akan dimulai besok."
+            : pendingDays.length === 0 
+              ? "Luar biasa Bunda! Semua laporan pelacakan laktasi terisi penuh." 
+              : `Terdapat ${pendingDays.length} laporan harian yang perlu diisi.`}
         </p>
       </div>
 
       {/* Pending Days Cards List */}
       <div className="space-y-4">
-        {pendingDays.length === 0 ? (
+        {state.currentHariKe < 1 ? (
+          <div className="bg-white rounded-[2rem] p-8 border border-gray-100 text-center flex flex-col items-center">
+            <div className="w-14 h-14 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
+              <Smile size={28} />
+            </div>
+            <h3 className="text-md font-bold text-gray-800">Masa Persiapan Laktasi</h3>
+            <p className="text-xs text-gray-400 max-w-xs mt-2 font-medium">
+              Bunda saat ini berada di masa persiapan. Pelacakan laktasi harian (Hari ke-1) akan otomatis terbuka esok hari. Selamat beristirahat!
+            </p>
+            <Link href="/dashboard" className="mt-6 px-6 py-2.5 bg-gray-50 text-gray-500 text-xs font-bold rounded-xl border border-gray-100">
+              Kembali ke Beranda
+            </Link>
+          </div>
+        ) : pendingDays.length === 0 ? (
           <div className="bg-[#E8F5E9]/50 rounded-[2rem] p-8 border border-emerald-100 text-center flex flex-col items-center">
             <div className="w-14 h-14 rounded-full bg-emerald-500 text-white flex items-center justify-center mb-4 shadow-lg shadow-emerald-500/10">
               <CheckCircle size={28} />
@@ -295,56 +316,66 @@ export default function FormPage() {
                 </div>
               )}
 
-              {questions.map((question) => (
-                <div key={question._id} className="bg-gray-50 rounded-2xl p-5 border border-gray-100 space-y-3.5">
-                  <div className="flex items-start gap-2.5">
-                    <div className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
-                      <HelpCircle size={12} />
-                    </div>
-                    <h4 className="text-xs font-bold text-gray-800 leading-normal">
-                      {question.pertanyaan}
-                    </h4>
-                  </div>
+              {questions.map((question) => {
+                // Secondary questions should only show if the primary question is answered "ya"
+                if (!question.is_primary) {
+                  const primaryQuestion = questions.find(q => q.is_primary);
+                  if (primaryQuestion && answers[primaryQuestion._id]?.toLowerCase() !== "ya") {
+                    return null;
+                  }
+                }
 
-                  {/* Input Renderer based on Question Type */}
-                  {question.tipe === "yes_no" ? (
-                    <div className="grid grid-cols-2 gap-2.5">
-                      <button
-                        type="button"
-                        onClick={() => handleSelectAnswer(question._id, "ya")}
-                        className={`py-3 rounded-xl text-xs font-bold border flex items-center justify-center gap-2 transition-all ${
-                          answers[question._id] === "ya"
-                            ? "bg-primary border-primary text-white shadow-sm"
-                            : "bg-white border-gray-100 text-gray-600"
-                        }`}
-                      >
-                        <Check size={14} />
-                        Ya
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleSelectAnswer(question._id, "tidak")}
-                        className={`py-3 rounded-xl text-xs font-bold border flex items-center justify-center gap-2 transition-all ${
-                          answers[question._id] === "tidak"
-                            ? "bg-amber-400 border-amber-400 text-white shadow-sm"
-                            : "bg-white border-gray-100 text-gray-600"
-                        }`}
-                      >
-                        <X size={14} />
-                        Belum Keluar
-                      </button>
+                return (
+                  <div key={question._id} className="bg-gray-50 rounded-2xl p-5 border border-gray-100 space-y-3.5">
+                    <div className="flex items-start gap-2.5">
+                      <div className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                        <HelpCircle size={12} />
+                      </div>
+                      <h4 className="text-xs font-bold text-gray-800 leading-normal">
+                        {question.pertanyaan}
+                      </h4>
                     </div>
-                  ) : (
-                    <textarea
-                      rows={2}
-                      placeholder="Masukkan catatan tambahan Bunda di sini..."
-                      value={answers[question._id] || ""}
-                      onChange={(e) => handleSelectAnswer(question._id, e.target.value)}
-                      className="w-full p-3.5 bg-white border border-gray-100 rounded-xl text-xs font-medium text-gray-800 focus:outline-none focus:border-primary transition-all placeholder:text-gray-400 resize-none"
-                    />
-                  )}
-                </div>
-              ))}
+  
+                    {/* Input Renderer based on Question Type */}
+                    {question.tipe === "yes_no" ? (
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <button
+                          type="button"
+                          onClick={() => handleSelectAnswer(question._id, "ya")}
+                          className={`py-3 rounded-xl text-xs font-bold border flex items-center justify-center gap-2 transition-all ${
+                            answers[question._id] === "ya"
+                              ? "bg-primary border-primary text-white shadow-sm"
+                              : "bg-white border-gray-100 text-gray-600"
+                          }`}
+                        >
+                          <Check size={14} />
+                          Ya, Benar
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleSelectAnswer(question._id, "tidak")}
+                          className={`py-3 rounded-xl text-xs font-bold border flex items-center justify-center gap-2 transition-all ${
+                            answers[question._id] === "tidak"
+                              ? "bg-amber-400 border-amber-400 text-white shadow-sm"
+                              : "bg-white border-gray-100 text-gray-600"
+                          }`}
+                        >
+                          <X size={14} />
+                          Belum / Tidak
+                        </button>
+                      </div>
+                    ) : (
+                      <textarea
+                        rows={2}
+                        placeholder="Masukkan catatan tambahan Bunda di sini..."
+                        value={answers[question._id] || ""}
+                        onChange={(e) => handleSelectAnswer(question._id, e.target.value)}
+                        className="w-full p-3.5 bg-white border border-gray-100 rounded-xl text-xs font-medium text-gray-800 focus:outline-none focus:border-primary transition-all placeholder:text-gray-400 resize-none"
+                      />
+                    )}
+                  </div>
+                );
+              })}
 
               {/* Action Buttons */}
               <div className="pt-4 shrink-0">

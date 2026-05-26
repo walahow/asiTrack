@@ -9,15 +9,16 @@ function extractYouTubeId(url: string) {
   return (match && match[2].length === 11) ? match[2] : null;
 }
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, props: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await props.params;
     const session = await auth();
     if (!session?.user || (session.user.role !== "admin" && session.user.role !== "super_admin")) {
       return NextResponse.json({ status: "error", message: "Unauthorized" }, { status: 403 });
     }
 
     await dbConnect();
-    const video = await Video.findById(params.id);
+    const video = await Video.findById(id);
     if (!video) {
       return NextResponse.json({ status: "error", message: "Video not found" }, { status: 404 });
     }
@@ -28,8 +29,9 @@ export async function GET(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, props: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await props.params;
     const session = await auth();
     if (!session?.user || (session.user.role !== "admin" && session.user.role !== "super_admin")) {
       return NextResponse.json({ status: "error", message: "Unauthorized" }, { status: 403 });
@@ -47,7 +49,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     }
 
     await dbConnect();
-    const updatedVideo = await Video.findByIdAndUpdate(params.id, data, { new: true });
+    const updatedVideo = await Video.findByIdAndUpdate(id, data, { new: true });
 
     return NextResponse.json({ status: "success", data: updatedVideo });
   } catch (error: any) {
@@ -55,15 +57,16 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, props: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await props.params;
     const session = await auth();
     if (!session?.user || (session.user.role !== "admin" && session.user.role !== "super_admin")) {
       return NextResponse.json({ status: "error", message: "Unauthorized" }, { status: 403 });
     }
 
     await dbConnect();
-    await Video.findByIdAndDelete(params.id);
+    await Video.findByIdAndDelete(id);
 
     return NextResponse.json({ status: "success", message: "Video deleted" });
   } catch (error: any) {

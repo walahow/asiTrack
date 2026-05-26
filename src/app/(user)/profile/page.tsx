@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { signOut } from "next-auth/react";
 import { User as UserIcon, Bell, Settings, LogOut, ChevronRight, Edit3, X, Check, Calendar, Mail, BookOpen, Briefcase, MapPin, Award, ShieldAlert } from "lucide-react";
 import BadgeIcon from "@/components/user/BadgeIcon";
+import { format } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
+import { id } from "date-fns/locale";
 
 interface UserProfile {
   nama_lengkap: string;
@@ -38,11 +41,11 @@ export default function ProfilePage() {
         const res = await fetch("/api/user/profile");
         const data = await res.json();
         if (res.ok && data.status === "success" && data.user) {
-          // Format birthdate to yyyy-MM-dd for HTML5 input
           let tglStr = "";
           if (data.user.tgl_melahirkan) {
             const d = new Date(data.user.tgl_melahirkan);
-            tglStr = d.toISOString().split("T")[0];
+            const wibDate = toZonedTime(d, "Asia/Jakarta");
+            tglStr = format(wibDate, "yyyy-MM-dd");
           }
           const loadedProfile: UserProfile = {
             nama_lengkap: data.user.nama_lengkap || "",
@@ -72,10 +75,11 @@ export default function ProfilePage() {
   // Safe formatting helper for dates (Indonesian month names)
   const formatTglMelahirkan = (dateStr: string) => {
     try {
-      const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+      if (!dateStr) return "-";
+      // dateStr is in "YYYY-MM-DD" format
       const d = new Date(dateStr);
       if (isNaN(d.getTime())) return dateStr;
-      return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+      return format(d, "dd MMMM yyyy", { locale: id });
     } catch {
       return dateStr;
     }

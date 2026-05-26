@@ -49,7 +49,7 @@ export default function HistoryPage() {
       }
       setState(stateData.data);
 
-      const questionsRes = await fetch("/api/questions");
+      const questionsRes = await fetch("/api/questions", { cache: "no-store" });
       const questionsData = await questionsRes.json();
       if (questionsData.status !== "success") {
         throw new Error(questionsData.message || "Gagal memuat pertanyaan.");
@@ -245,7 +245,7 @@ export default function HistoryPage() {
                   </span>
                 </div>
                 <div className="p-4 bg-gray-50 rounded-xl border border-gray-100 flex justify-between items-center">
-                  <span className="text-xs font-bold text-gray-700">Apakah ASI sudah keluar?</span>
+                  <span className="text-xs font-bold text-gray-700">Pertanyaan Milestone (Utama)</span>
                   <span className="px-3 py-1 bg-primary text-white text-[10px] font-bold rounded-full">
                     Ya (Tercapai)
                   </span>

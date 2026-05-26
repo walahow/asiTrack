@@ -3,15 +3,16 @@ import { auth } from "@/auth";
 import { dbConnect } from "@/lib/db/mongoose";
 import Article from "@/models/Article";
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, props: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await props.params;
     const session = await auth();
     if (!session?.user || (session.user.role !== "admin" && session.user.role !== "super_admin")) {
       return NextResponse.json({ status: "error", message: "Unauthorized" }, { status: 403 });
     }
 
     await dbConnect();
-    const article = await Article.findById(params.id);
+    const article = await Article.findById(id);
     if (!article) {
       return NextResponse.json({ status: "error", message: "Article not found" }, { status: 404 });
     }
@@ -22,8 +23,9 @@ export async function GET(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, props: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await props.params;
     const session = await auth();
     if (!session?.user || (session.user.role !== "admin" && session.user.role !== "super_admin")) {
       return NextResponse.json({ status: "error", message: "Unauthorized" }, { status: 403 });
@@ -39,7 +41,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     }
 
     await dbConnect();
-    const updatedArticle = await Article.findByIdAndUpdate(params.id, data, { new: true });
+    const updatedArticle = await Article.findByIdAndUpdate(id, data, { new: true });
 
     return NextResponse.json({ status: "success", data: updatedArticle });
   } catch (error: any) {
@@ -47,15 +49,16 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, props: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await props.params;
     const session = await auth();
     if (!session?.user || (session.user.role !== "admin" && session.user.role !== "super_admin")) {
       return NextResponse.json({ status: "error", message: "Unauthorized" }, { status: 403 });
     }
 
     await dbConnect();
-    await Article.findByIdAndDelete(params.id);
+    await Article.findByIdAndDelete(id);
 
     return NextResponse.json({ status: "success", message: "Article deleted" });
   } catch (error: any) {

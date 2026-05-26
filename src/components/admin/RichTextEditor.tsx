@@ -21,7 +21,14 @@ export default function RichTextEditor({ content, onChange }: { content: string,
     },
     editorProps: {
       attributes: {
-        class: "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[300px] p-4",
+        class: "focus:outline-none min-h-[300px] p-4 " +
+               "[&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-4 [&_li]:mb-1 " +
+               "[&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:my-4 " +
+               "[&_p]:mb-4 [&_p:last-child]:mb-0 " +
+               "[&_h1]:text-2xl [&_h1]:font-black [&_h1]:mb-4 " +
+               "[&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-3 " +
+               "[&_h3]:text-lg [&_h3]:font-bold [&_h3]:mb-2 " +
+               "text-gray-800",
       },
       handleDrop: (view, event, slice, moved) => {
         if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {

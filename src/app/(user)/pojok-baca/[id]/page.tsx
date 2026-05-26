@@ -111,16 +111,17 @@ export default function ArticleDetailPage() {
       )}
 
       {/* Rich Text Content */}
-      {/* We use a wrapper with global typography styles. 
-          In a real app, Tailwind Typography plugin is ideal, 
-          but we will simulate clean styling directly. */}
+      {/* We use explicit Tailwind arbitrary variants to ensure spacing between paragraphs and proper heading sizes since Tailwind resets all margins by default. */}
       <div 
-        className="prose prose-sm prose-gray max-w-none 
-                   prose-headings:font-black prose-headings:text-gray-800 
-                   prose-p:text-gray-600 prose-p:leading-relaxed 
-                   prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-                   prose-ul:text-gray-600 prose-ul:my-4 prose-li:my-1
-                   prose-strong:text-gray-800 prose-strong:font-extrabold"
+        className="article-content max-w-none text-sm text-gray-600
+                   [&_p]:mb-4 [&_p]:leading-relaxed [&_p:last-child]:mb-0
+                   [&_h1]:text-2xl [&_h1]:font-black [&_h1]:text-gray-900 [&_h1]:mb-4 [&_h1]:mt-6
+                   [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-gray-800 [&_h2]:mb-3 [&_h2]:mt-5
+                   [&_h3]:text-lg [&_h3]:font-bold [&_h3]:text-gray-800 [&_h3]:mb-2 [&_h3]:mt-4
+                   [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ul_li]:mb-1
+                   [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4 [&_ol_li]:mb-1
+                   [&_strong]:font-extrabold [&_strong]:text-gray-800
+                   [&_a]:text-primary [&_a]:underline"
         dangerouslySetInnerHTML={{ __html: article.content }}
       />
     </div>

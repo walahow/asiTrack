@@ -21,45 +21,8 @@ export const authConfig = {
       }
       return session;
     },
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-      const pathname = nextUrl.pathname;
-
-      const isUserPage =
-        pathname.startsWith("/dashboard") ||
-        pathname.startsWith("/profile") ||
-        pathname.startsWith("/form") ||
-        pathname.startsWith("/pojok-baca") ||
-        pathname.startsWith("/video") ||
-        pathname.startsWith("/onboarding");
-
-      const isAdminPage = pathname.startsWith("/admin") && pathname !== "/admin/login";
-      const isSuperAdminPage = pathname.startsWith("/admin/admins");
-
-      // Super Admin route protection
-      if (isSuperAdminPage) {
-        return isLoggedIn && auth?.user?.role === "super_admin";
-      }
-
-      // Admin route protection
-      if (isAdminPage) {
-        return isLoggedIn && (auth?.user?.role === "admin" || auth?.user?.role === "super_admin");
-      }
-
-      // User client app page protection
-      if (isUserPage) {
-        return isLoggedIn && auth?.user?.role === "user";
-      }
-
-      // Unauthenticated users attempting to access public pages (like login/signup)
-      if (isLoggedIn && (pathname === "/auth/login" || pathname === "/auth/signup")) {
-        return Response.redirect(new URL("/dashboard", nextUrl));
-      }
-      if (isLoggedIn && pathname === "/admin/login") {
-        return Response.redirect(new URL("/admin", nextUrl));
-      }
-
-      return true;
+    authorized() {
+      return true; // Let middleware.ts handle all routing logic
     },
   },
   providers: [], // Empty array by default, will be populated in src/auth.ts

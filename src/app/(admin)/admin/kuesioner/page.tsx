@@ -101,45 +101,85 @@ export default function AdminKuesioner() {
             {secondaryQuestions.length === 0 ? (
               <p className="text-gray-500 text-sm italic">Belum ada pertanyaan sekunder.</p>
             ) : (
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-gray-100">
-                    <th className="py-3 text-sm font-semibold text-gray-600 w-16 text-center">Urutan</th>
-                    <th className="py-3 text-sm font-semibold text-gray-600">Pertanyaan</th>
-                    <th className="py-3 text-sm font-semibold text-gray-600">Tipe</th>
-                    <th className="py-3 text-sm font-semibold text-gray-600 text-right">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
+              <>
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left border-collapse min-w-[500px]">
+                    <thead>
+                      <tr className="border-b border-gray-100">
+                        <th className="py-3 text-sm font-semibold text-gray-600 w-16 text-center">Urutan</th>
+                        <th className="py-3 text-sm font-semibold text-gray-600">Pertanyaan</th>
+                        <th className="py-3 text-sm font-semibold text-gray-600 whitespace-nowrap">Tipe</th>
+                        <th className="py-3 text-sm font-semibold text-gray-600 text-right">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {secondaryQuestions.map((q) => (
+                        <tr key={q._id} className="hover:bg-gray-50/50 transition-colors">
+                          <td className="py-4 text-center font-medium text-gray-500">{q.order}</td>
+                          <td className="py-4 font-medium text-gray-800">{q.pertanyaan}</td>
+                          <td className="py-4 whitespace-nowrap">
+                            <span className="text-sm text-gray-500 bg-gray-100 px-2.5 py-1 rounded-md font-medium border border-gray-200">
+                              {q.tipe === "yes_no" ? "Ya / Tidak" : "Open Ended"}
+                            </span>
+                          </td>
+                          <td className="py-4 text-right">
+                            <div className="flex justify-end gap-2">
+                              <Link 
+                                href={`/admin/kuesioner/${q._id}/edit`}
+                                className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                              >
+                                <Edit size={18} />
+                              </Link>
+                              <button 
+                                onClick={() => handleDelete(q._id, q.is_primary)}
+                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Card View */}
+                <div className="md:hidden space-y-3">
                   {secondaryQuestions.map((q) => (
-                    <tr key={q._id} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="py-4 text-center font-medium text-gray-500">{q.order}</td>
-                      <td className="py-4 font-medium text-gray-800">{q.pertanyaan}</td>
-                      <td className="py-4">
-                        <span className="text-sm text-gray-500 bg-gray-100 px-2.5 py-1 rounded-md font-medium border border-gray-200">
-                          {q.tipe === "yes_no" ? "Ya / Tidak" : "Open Ended"}
-                        </span>
-                      </td>
-                      <td className="py-4 text-right">
-                        <div className="flex justify-end gap-2">
-                          <Link 
-                            href={`/admin/kuesioner/${q._id}/edit`}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                          >
-                            <Edit size={18} />
-                          </Link>
-                          <button 
-                            onClick={() => handleDelete(q._id, q.is_primary)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          >
-                            <Trash2 size={18} />
-                          </button>
+                    <div key={q._id} className="bg-gray-50/50 rounded-xl p-4 border border-gray-100">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-gray-200 text-gray-600 font-bold flex items-center justify-center shrink-0">
+                          {q.order}
                         </div>
-                      </td>
-                    </tr>
+                        <div className="flex-1">
+                          <p className="font-bold text-gray-800 leading-snug">{q.pertanyaan}</p>
+                          <div className="flex items-center justify-between mt-3">
+                            <span className="text-[10px] text-gray-500 bg-white px-2 py-1 rounded-md font-bold border border-gray-200">
+                              {q.tipe === "yes_no" ? "Ya / Tidak" : "Open Ended"}
+                            </span>
+                            <div className="flex gap-1.5">
+                              <Link 
+                                href={`/admin/kuesioner/${q._id}/edit`}
+                                className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+                              >
+                                <Edit size={16} />
+                              </Link>
+                              <button 
+                                onClick={() => handleDelete(q._id, q.is_primary)}
+                                className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   ))}
-                </tbody>
-              </table>
+                </div>
+              </>
             )}
           </>
         )}

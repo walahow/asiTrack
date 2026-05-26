@@ -55,62 +55,115 @@ export default function AdminArtikel() {
             <Loader2 className="animate-spin text-primary" size={32} />
           </div>
         ) : (
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-100">
-                <th className="px-6 py-4 text-sm font-semibold text-gray-600">Judul Artikel</th>
-                <th className="px-6 py-4 text-sm font-semibold text-gray-600">Status</th>
-                <th className="px-6 py-4 text-sm font-semibold text-gray-600">Terakhir Update</th>
-                <th className="px-6 py-4 text-sm font-semibold text-gray-600 text-right">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[600px]">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-gray-100">
+                    <th className="px-6 py-4 text-sm font-semibold text-gray-600">Judul Artikel</th>
+                    <th className="px-6 py-4 text-sm font-semibold text-gray-600">Status</th>
+                    <th className="px-6 py-4 text-sm font-semibold text-gray-600 whitespace-nowrap">Terakhir Update</th>
+                    <th className="px-6 py-4 text-sm font-semibold text-gray-600 text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {articles.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="text-center py-8 text-gray-500">Belum ada artikel</td>
+                    </tr>
+                  ) : (
+                    articles.map((article) => (
+                      <tr key={article._id} className="hover:bg-gray-50/50 transition-colors">
+                        <td className="px-6 py-4">
+                          <p className="font-medium text-gray-800">{article.title}</p>
+                          <p className="text-sm text-gray-500 line-clamp-1 mt-0.5">{article.excerpt}</p>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {article.published ? (
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                              Published
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                              Draft
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                          {new Date(article.updatedAt || article.createdAt).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' })}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex justify-end gap-2">
+                            <Link 
+                              href={`/admin/artikel/${article._id}/edit`}
+                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            >
+                              <Edit size={18} />
+                            </Link>
+                            <button 
+                              onClick={() => handleDelete(article._id)}
+                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden divide-y divide-gray-100">
               {articles.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="text-center py-8 text-gray-500">Belum ada artikel</td>
-                </tr>
+                <div className="text-center py-8 text-gray-500">Belum ada artikel</div>
               ) : (
                 articles.map((article) => (
-                  <tr key={article._id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <p className="font-medium text-gray-800">{article.title}</p>
-                      <p className="text-sm text-gray-500 line-clamp-1 mt-0.5">{article.excerpt}</p>
-                    </td>
-                    <td className="px-6 py-4">
-                      {article.published ? (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                          Published
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                          Draft
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      {new Date(article.updatedAt || article.createdAt).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' })}
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2">
+                  <div key={article._id} className="p-4 hover:bg-gray-50/50 transition-colors">
+                    <div className="flex justify-between items-start gap-4 mb-2">
+                      <div>
+                        <h3 className="font-bold text-gray-800 leading-tight">{article.title}</h3>
+                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">{article.excerpt}</p>
+                      </div>
+                      <div className="shrink-0">
+                        {article.published ? (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                            Published
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-800">
+                            Draft
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between mt-4">
+                      <span className="text-[11px] text-gray-400 font-medium">
+                        {new Date(article.updatedAt || article.createdAt).toLocaleDateString("id-ID", { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </span>
+                      <div className="flex gap-1.5">
                         <Link 
                           href={`/admin/artikel/${article._id}/edit`}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
                         >
-                          <Edit size={18} />
+                          <Edit size={16} />
                         </Link>
                         <button 
                           onClick={() => handleDelete(article._id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
                         >
-                          <Trash2 size={18} />
+                          <Trash2 size={16} />
                         </button>
                       </div>
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 ))
               )}
-            </tbody>
-          </table>
+            </div>
+          </>
         )}
       </div>
     </div>

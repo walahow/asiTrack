@@ -10,6 +10,7 @@ import {
   Download, 
   LogOut 
 } from "lucide-react";
+import MobileAdminNav from "@/components/admin/MobileAdminNav";
 
 export default async function AdminLayout({
   children,
@@ -76,18 +77,21 @@ export default async function AdminLayout({
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
-        <header className="h-20 bg-white border-b border-gray-200 flex items-center gap-4 px-6 md:hidden">
-          <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-primary/5 p-1.5 border border-primary/10 flex items-center justify-center shadow-sm">
-            <Image
-              src="/logo.png"
-              alt="asiTrack Logo"
-              fill
-              sizes="48px"
-              className="object-contain"
-              priority
-            />
+        <header className="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-6 md:hidden shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-primary/5 p-1 border border-primary/10 flex items-center justify-center shadow-sm">
+              <Image
+                src="/logo.png"
+                alt="asiTrack Logo"
+                fill
+                sizes="40px"
+                className="object-contain"
+                priority
+              />
+            </div>
+            <h1 className="text-xl font-bold text-primary tracking-tight">asiTrack</h1>
           </div>
-          <h1 className="text-2xl font-bold text-primary tracking-tight">asiTrack Admin</h1>
+          <MobileAdminNav />
         </header>
         <div className="flex-1 overflow-auto p-6 md:p-8">
           {children}

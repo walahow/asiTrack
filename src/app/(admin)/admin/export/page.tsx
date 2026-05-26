@@ -34,20 +34,26 @@ export default function AdminExport() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Periode Tanggal Melahirkan</label>
-            <div className="flex gap-2">
-              <input 
-                type="date" 
-                value={dateFrom}
-                onChange={(e) => setDateFrom(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none" 
-              />
-              <span className="self-center text-gray-400">-</span>
-              <input 
-                type="date" 
-                value={dateTo}
-                onChange={(e) => setDateTo(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none" 
-              />
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-2">
+              <div className="w-full relative">
+                <span className="sm:hidden absolute -top-2 left-2 bg-white px-1 text-[10px] font-bold text-gray-500 z-10">Dari</span>
+                <input 
+                  type="date" 
+                  value={dateFrom}
+                  onChange={(e) => setDateFrom(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none" 
+                />
+              </div>
+              <span className="hidden sm:block self-center text-gray-400">-</span>
+              <div className="w-full relative">
+                <span className="sm:hidden absolute -top-2 left-2 bg-white px-1 text-[10px] font-bold text-gray-500 z-10">Sampai</span>
+                <input 
+                  type="date" 
+                  value={dateTo}
+                  onChange={(e) => setDateTo(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none" 
+                />
+              </div>
             </div>
           </div>
           <div>
@@ -69,19 +75,19 @@ export default function AdminExport() {
           </div>
         </div>
 
-        <div className="bg-primary-bg p-6 rounded-xl flex items-center justify-between border border-primary-light">
+        <div className="bg-primary-bg p-6 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border border-primary-light">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary shadow-sm">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary shadow-sm shrink-0">
               <FileSpreadsheet size={24} />
             </div>
             <div>
               <h3 className="font-bold text-gray-800">Siap untuk diunduh</h3>
-              <p className="text-sm text-gray-600">Tekan tombol di samping untuk mulai mengunduh file CSV.</p>
+              <p className="text-sm text-gray-600">Tekan tombol untuk mulai mengunduh file CSV.</p>
             </div>
           </div>
           <button 
             onClick={handleExport}
-            className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-bold shadow-md shadow-primary/20 hover:bg-primary-hover transition-colors"
+            className="flex items-center justify-center w-full md:w-auto gap-2 bg-primary text-white px-6 py-3 rounded-xl font-bold shadow-md shadow-primary/20 hover:bg-primary-hover transition-colors shrink-0"
           >
             <Download size={20} />
             Export ke CSV

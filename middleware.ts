@@ -28,14 +28,10 @@ export default auth((req) => {
     }
   }
 
-  // Admin route protection (catches /admin, /admin/dashboard, /admin/artikel, etc.)
+  // Admin route protection (catches /admin, /admin/artikel, etc.)
   if (isAdminPage) {
     if (!isLoggedIn || (req.auth?.user?.role !== "admin" && req.auth?.user?.role !== "super_admin")) {
       return NextResponse.redirect(new URL("/admin/login", req.nextUrl));
-    }
-    // Redirect bare /admin to /admin/dashboard only after auth is confirmed
-    if (pathname === "/admin") {
-      return NextResponse.redirect(new URL("/admin/dashboard", req.nextUrl));
     }
   }
 
@@ -53,13 +49,13 @@ export default auth((req) => {
   // Authenticated users trying to access public/login pages
   if (isLoggedIn && (pathname === "/" || pathname === "/auth/login" || pathname === "/auth/signup")) {
     if (req.auth?.user?.role === "admin" || req.auth?.user?.role === "super_admin") {
-      return NextResponse.redirect(new URL("/admin/dashboard", req.nextUrl));
+      return NextResponse.redirect(new URL("/admin", req.nextUrl));
     }
     return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
   }
   if (isLoggedIn && pathname === "/admin/login") {
     if (req.auth?.user?.role === "admin" || req.auth?.user?.role === "super_admin") {
-      return NextResponse.redirect(new URL("/admin/dashboard", req.nextUrl));
+      return NextResponse.redirect(new URL("/admin", req.nextUrl));
     } else {
       return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
     }

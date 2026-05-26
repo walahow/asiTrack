@@ -63,7 +63,7 @@ export default function PojokBacaList() {
   }
 
   return (
-    <div className="flex flex-col flex-1 pb-24 pt-10 px-6 overflow-y-auto">
+    <div className="flex flex-col flex-1 pb-24 md:pb-12 pt-10 px-6 max-w-7xl mx-auto w-full">
       <div className="mb-8">
         <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/10 text-primary mb-4 shadow-sm border border-primary/20">
           <BookOpen size={24} />
@@ -83,7 +83,7 @@ export default function PojokBacaList() {
           <p className="text-xs text-gray-400 mt-1">Artikel laktasi akan segera hadir di sini.</p>
         </div>
       ) : (
-        <div className="flex flex-col gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article) => (
             <Link 
               key={article._id} 

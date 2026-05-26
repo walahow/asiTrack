@@ -190,7 +190,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="flex flex-col flex-1 pb-32 pt-10 px-6 overflow-y-auto bg-[#FAF8F5]">
+    <div className="flex flex-col flex-1 pb-32 md:pb-12 pt-10 px-6 max-w-4xl mx-auto w-full bg-[#FAF8F5] md:bg-transparent">
       {/* Toast Notification */}
       {showToast && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[200] bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-lg flex items-center gap-2 font-semibold text-sm animate-in fade-in slide-in-from-top-4 duration-300">
@@ -347,11 +347,11 @@ export default function ProfilePage() {
 
       {/* Edit Profile Modal / Bottom Sheet */}
       {isEditing && (
-        <div className="fixed inset-0 z-[100] flex flex-col justify-end">
+        <div className="fixed inset-0 z-[100] flex flex-col justify-end md:justify-center">
           <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setIsEditing(false)}></div>
           <form 
             onSubmit={handleSave} 
-            className="bg-white w-full max-w-md mx-auto rounded-t-[2.5rem] p-8 relative z-10 animate-in slide-in-from-bottom-full duration-300 max-h-[85vh] flex flex-col"
+            className="bg-white w-full max-w-md mx-auto rounded-t-[2.5rem] md:rounded-[2.5rem] p-8 relative z-10 animate-in slide-in-from-bottom-full md:zoom-in-95 duration-300 max-h-[85vh] flex flex-col"
           >
             <div className="flex justify-between items-center mb-6 shrink-0">
               <h3 className="text-2xl font-bold text-gray-800">Ubah Profil</h3>

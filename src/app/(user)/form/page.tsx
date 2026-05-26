@@ -179,7 +179,7 @@ export default function FormPage() {
   const { pendingDays, tgl_melahirkan } = state;
 
   return (
-    <div className="flex flex-col flex-1 pb-24 pt-10 px-6 overflow-y-auto">
+    <div className="flex flex-col flex-1 pb-24 md:pb-12 pt-10 px-6 max-w-4xl mx-auto w-full">
       
       {/* Back Header */}
       <div className="mb-6 flex items-center justify-between">
@@ -276,11 +276,11 @@ export default function FormPage() {
             onClick={handleCloseForm}
           />
 
-          {/* Sliding sheet container */}
-          <div className="fixed inset-x-0 bottom-0 max-w-md mx-auto bg-white rounded-t-[2.5rem] p-6 shadow-2xl z-50 transform translate-y-0 transition-transform duration-300 max-h-[85vh] overflow-y-auto flex flex-col justify-between">
+          {/* Sliding sheet / Modal container */}
+          <div className="fixed inset-x-0 bottom-0 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 w-full max-w-md bg-white rounded-t-[2.5rem] md:rounded-[2.5rem] p-6 shadow-2xl z-50 max-h-[85vh] overflow-y-auto flex flex-col justify-between">
             
-            {/* Sheet Handle */}
-            <div className="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-5 shrink-0" />
+            {/* Sheet Handle (Mobile Only) */}
+            <div className="md:hidden w-12 h-1 bg-gray-200 rounded-full mx-auto mb-5 shrink-0" />
 
             {/* Sheet Header */}
             <div className="flex items-center justify-between mb-6 shrink-0">

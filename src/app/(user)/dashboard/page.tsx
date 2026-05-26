@@ -217,10 +217,10 @@ export default function DashboardHome() {
   });
 
   return (
-    <div className="flex flex-col flex-1 pb-24 pt-10 px-6 overflow-y-auto">
+    <div className="flex flex-col flex-1 pb-24 md:pb-12 pt-10 px-6 max-w-3xl mx-auto w-full">
       
-      {/* App Header */}
-      <div className="flex items-center justify-between mb-8">
+      {/* App Header (Mobile Only) */}
+      <div className="md:hidden flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
           <div className="relative w-12 h-12 rounded-[1.25rem] overflow-hidden bg-primary/5 p-2 border border-primary/10 flex items-center justify-center shadow-sm">
             <Image
@@ -253,7 +253,10 @@ export default function DashboardHome() {
         </p>
       </div>
 
-      <main className="space-y-6 flex flex-col">
+      <main className="flex flex-col gap-6 w-full max-w-3xl mx-auto">
+        
+        {/* Main Focus: Actions & Timeline */}
+        <div className="space-y-6 flex flex-col">
         
         {/* Core Actions Card */}
         {completed ? (
@@ -447,7 +450,7 @@ export default function DashboardHome() {
             <p className="text-[11px] text-gray-400 font-medium">Visualisasi progres harian pasca persalinan</p>
           </div>
           
-          <div className="bg-white rounded-[2rem] p-5 shadow-[0_8px_30px_rgba(0,0,0,0.02)] border border-gray-50">
+          <div className="bg-white rounded-[2rem] p-5 shadow-[0_8px_30px_rgba(0,0,0,0.02)] border border-gray-50 max-w-3xl mx-auto w-full">
             <div className="flex items-center justify-between w-full relative px-1">
               
               {/* Background Line */}
@@ -534,10 +537,10 @@ export default function DashboardHome() {
           </div>
         </section>
 
-        {/* Informative Security Footer */}
-        <div className="flex items-center gap-2 p-3 bg-gray-50 border border-gray-100 rounded-xl text-[10px] font-bold text-gray-400 mt-4 justify-center">
-          <ShieldCheck size={14} className="text-primary shrink-0" />
-          <span>Sesi Keamanan Enkripsi Terlindungi &bull; asiTrack MedTech</span>
+          <div className="flex items-center gap-2 p-3 bg-gray-50 border border-gray-100 rounded-xl text-[10px] font-bold text-gray-400 mt-4 justify-center">
+            <ShieldCheck size={14} className="text-primary shrink-0" />
+            <span>Privasi Data Bunda Terjaga &bull; asiTrack</span>
+          </div>
         </div>
 
       </main>

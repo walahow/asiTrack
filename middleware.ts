@@ -41,8 +41,12 @@ export default auth((req) => {
 
   // --- USER ROUTE PROTECTION ---
   if (isUserPage) {
-    if (!isLoggedIn || req.auth?.user?.role !== "user") {
+    if (!isLoggedIn) {
       return NextResponse.redirect(new URL("/auth/login", req.nextUrl));
+    }
+    // Prevent admins from accessing user dashboard (send them to admin portal)
+    if (req.auth?.user?.role === "admin" || req.auth?.user?.role === "super_admin") {
+      return NextResponse.redirect(new URL("/admin/dashboard", req.nextUrl));
     }
   }
 

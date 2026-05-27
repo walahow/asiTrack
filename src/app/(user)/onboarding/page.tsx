@@ -390,13 +390,13 @@ export default function OnboardingPage() {
             <button
               type="button"
               onClick={handleToggle}
-              className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${
+              className={`shrink-0 w-11 h-6 flex items-center rounded-full p-0.5 cursor-pointer transition-colors duration-300 ${
                 formData.notif_enabled ? "bg-primary" : "bg-gray-200"
               }`}
             >
               <div
-                className={`bg-white w-4.5 h-4.5 rounded-full shadow-md transform transition-transform duration-300 ${
-                  formData.notif_enabled ? "translate-x-5.5" : "translate-x-0"
+                className={`bg-white w-5 h-5 rounded-full shadow-md transform transition-transform duration-300 ${
+                  formData.notif_enabled ? "translate-x-5" : "translate-x-0"
                 }`}
               />
             </button>

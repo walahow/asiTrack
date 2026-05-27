@@ -38,6 +38,10 @@ export default function FabNav() {
     { name: "Beranda", href: "/dashboard", icon: Home },
   ];
 
+  if (pathname === "/onboarding") {
+    return null;
+  }
+
   return (
     <>
       {/* Background Dimmer */}

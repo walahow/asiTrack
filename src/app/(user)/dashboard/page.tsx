@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Check, X, Sparkles, PartyPopper, CheckCircle2, CircleDashed, Calendar, ShieldCheck, Heart, AlertCircle, Smile, BellOff, ChevronRight } from "lucide-react";
+import { signOut } from "next-auth/react";
 
 interface Question {
   _id: string;
@@ -61,6 +62,12 @@ export default function DashboardHome() {
         fetch("/api/responses/state"),
         fetch("/api/questions"),
       ]);
+
+      if (stateRes.status === 401 || stateRes.status === 404) {
+        console.warn("User deleted or unauthorized. Auto-signing out...");
+        signOut({ callbackUrl: "/auth/login" });
+        return;
+      }
 
       const stateData = await stateRes.json();
       const questionsData = await questionsRes.json();

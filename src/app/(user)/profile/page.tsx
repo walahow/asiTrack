@@ -37,6 +37,13 @@ export default function ProfilePage() {
     async function fetchProfile() {
       try {
         const res = await fetch("/api/user/profile");
+        
+        if (res.status === 401 || res.status === 404) {
+          console.warn("User deleted or unauthorized in profile. Auto-signing out...");
+          signOut({ callbackUrl: "/auth/login" });
+          return;
+        }
+
         const data = await res.json();
         if (res.ok && data.status === "success" && data.user) {
           let tglStr = "";

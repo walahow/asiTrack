@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Sparkles, Calendar, BookOpen, MapPin, Briefcase, Bell, Smile, AlertCircle, User, AtSign, Loader2 } from "lucide-react";
+import { signOut } from "next-auth/react";
 import { requestPushPermission } from "@/lib/firebase/client";
 import { toZonedTime } from "date-fns-tz";
 import { format } from "date-fns";
@@ -31,6 +32,13 @@ export default function OnboardingPage() {
     async function fetchProfile() {
       try {
         const res = await fetch("/api/user/profile");
+        
+        if (res.status === 401 || res.status === 404) {
+          console.warn("User deleted or unauthorized in onboarding. Auto-signing out...");
+          signOut({ callbackUrl: "/auth/login" });
+          return;
+        }
+
         const data = await res.json();
         if (res.ok && data.status === "success" && data.user) {
           let tglStr = "";

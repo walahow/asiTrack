@@ -58,7 +58,7 @@ export async function GET(request: Request) {
           hari_ke: currentHariKe,
         });
 
-        if (!existingResponse) {
+        if (!existingResponse && user.fcm_token) {
           // Send notification because they haven't filled it out
           const result = await sendPushNotification(
             user.fcm_token,

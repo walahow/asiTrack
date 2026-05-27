@@ -23,7 +23,8 @@ export async function GET(request: Request) {
     await dbConnect();
 
     // Find the active template for this slot
-    const template = await NotificationTemplate.findOne({ tipe: slot, active: true });
+    const validSlot = slot as 'morning' | 'afternoon' | 'evening';
+    const template = await NotificationTemplate.findOne({ tipe: validSlot, active: true });
     
     if (!template) {
       return NextResponse.json({ message: `No active template found for slot: ${slot}` });

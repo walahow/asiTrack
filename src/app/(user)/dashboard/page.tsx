@@ -92,6 +92,35 @@ export default function DashboardHome() {
     }
   }, []);
 
+  // Silent auto-sync token for push notifications if globally enabled and locally permitted
+  useEffect(() => {
+    async function syncToken() {
+      if (state && state.notif_enabled && typeof window !== "undefined" && "Notification" in window) {
+        if (Notification.permission === "granted") {
+          try {
+            const { requestPushPermission } = await import("@/lib/firebase/client");
+            const token = await requestPushPermission();
+            if (token) {
+              await fetch("/api/user/profile", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  notif_enabled: true,
+                  fcm_token: token
+                })
+              });
+              console.log("[Dashboard] Silent token auto-sync successful.");
+            }
+          } catch (err) {
+            console.error("[Dashboard] Silent token auto-sync error:", err);
+          }
+        }
+      }
+    }
+    syncToken();
+  }, [state?.notif_enabled]);
+
+
   const handleNext = (questionId: string, jawaban: string) => {
     if (!jawaban.trim()) return;
     

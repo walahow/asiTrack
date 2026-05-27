@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { User as UserIcon, Bell, Settings, LogOut, ChevronRight, Edit3, X, Check, Calendar, Mail, BookOpen, Briefcase, MapPin, Award, ShieldAlert } from "lucide-react";
 import BadgeIcon from "@/components/user/BadgeIcon";
@@ -20,7 +21,7 @@ interface UserProfile {
 }
 
 export default function ProfilePage() {
-  const [isEditing, setIsEditing] = useState(false);
+  const router = useRouter();
   const [showToast, setShowToast] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -31,9 +32,6 @@ export default function ProfilePage() {
     username: "",
     tgl_melahirkan: "",
   });
-
-  // Temporary form state
-  const [tempProfile, setTempProfile] = useState<UserProfile>({ ...profile });
 
   useEffect(() => {
     async function fetchProfile() {
@@ -58,7 +56,6 @@ export default function ProfilePage() {
             pekerjaan: data.user.pekerjaan || "",
           };
           setProfile(loadedProfile);
-          setTempProfile(loadedProfile);
           setProfileFullyFilled(!!data.profile_fully_filled);
         } else {
           setError(data.message || "Gagal mengambil data profil.");
@@ -106,60 +103,7 @@ export default function ProfilePage() {
   };
 
   const handleEditClick = () => {
-    setTempProfile({ ...profile });
-    setIsEditing(true);
-  };
-
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!tempProfile.nama_lengkap.trim() || !tempProfile.username.trim() || !tempProfile.tgl_melahirkan) {
-      alert("Nama Lengkap, Username, dan Tanggal Melahirkan harus diisi.");
-      return;
-    }
-    
-    try {
-      const res = await fetch("/api/user/profile", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nama_lengkap: tempProfile.nama_lengkap,
-          username: tempProfile.username,
-          tgl_melahirkan: tempProfile.tgl_melahirkan,
-          usia: tempProfile.usia,
-          anak_ke_berapa: tempProfile.anak_ke_berapa,
-          alamat: tempProfile.alamat,
-          pendidikan: tempProfile.pendidikan,
-          pekerjaan: tempProfile.pekerjaan,
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || "Gagal memperbarui profil.");
-      }
-
-      setProfile({ ...tempProfile });
-      setIsEditing(false);
-      
-      // Re-evaluate if fully filled locally to update warning immediately
-      const isFullyFilled = !!(
-        tempProfile.nama_lengkap &&
-        tempProfile.username &&
-        tempProfile.tgl_melahirkan &&
-        tempProfile.usia !== undefined && tempProfile.usia !== null &&
-        tempProfile.anak_ke_berapa !== undefined && tempProfile.anak_ke_berapa !== null &&
-        tempProfile.alamat && tempProfile.alamat.trim() !== "" &&
-        tempProfile.pendidikan && tempProfile.pendidikan.trim() !== "" &&
-        tempProfile.pekerjaan && tempProfile.pekerjaan.trim() !== ""
-      );
-      setProfileFullyFilled(isFullyFilled);
-
-      // Show beautiful custom success toast
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
-    } catch (err: any) {
-      alert(err.message || "Terjadi kesalahan saat menyimpan profil.");
-    }
+    router.push("/onboarding");
   };
 
   if (isLoading) {
@@ -344,148 +288,6 @@ export default function ProfilePage() {
           </button>
         </section>
       </main>
-
-      {/* Edit Profile Modal / Bottom Sheet */}
-      {isEditing && (
-        <div className="fixed inset-0 z-[100] flex flex-col justify-end md:justify-center">
-          <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setIsEditing(false)}></div>
-          <form 
-            onSubmit={handleSave} 
-            className="bg-white w-full max-w-md mx-auto rounded-t-[2.5rem] md:rounded-[2.5rem] p-8 relative z-10 animate-in slide-in-from-bottom-full md:zoom-in-95 duration-300 max-h-[85vh] flex flex-col"
-          >
-            <div className="flex justify-between items-center mb-6 shrink-0">
-              <h3 className="text-2xl font-bold text-gray-800">Ubah Profil</h3>
-              <button 
-                type="button" 
-                onClick={() => setIsEditing(false)} 
-                className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-200"
-              >
-                <X size={18} />
-              </button>
-            </div>
-            
-            {/* Scrollable Form Inputs */}
-            <div className="flex-1 overflow-y-auto pr-1 -mr-2 space-y-4 pb-6">
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-2">Nama Lengkap *</label>
-                <input 
-                  type="text" 
-                  value={tempProfile.nama_lengkap} 
-                  onChange={(e) => setTempProfile({ ...tempProfile, nama_lengkap: e.target.value })}
-                  placeholder="Nama Lengkap Bunda"
-                  required 
-                  className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 text-sm text-gray-800 font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" 
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-2">Username *</label>
-                <input 
-                  type="text" 
-                  value={tempProfile.username} 
-                  onChange={(e) => setTempProfile({ ...tempProfile, username: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '') })}
-                  placeholder="username_bunda"
-                  required 
-                  className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 text-sm text-gray-800 font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" 
-                />
-              </div>
-              
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-2">Tanggal Melahirkan *</label>
-                <input 
-                  type="date" 
-                  value={tempProfile.tgl_melahirkan} 
-                  onChange={(e) => setTempProfile({ ...tempProfile, tgl_melahirkan: e.target.value })}
-                  required 
-                  className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 text-sm text-gray-800 font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" 
-                />
-                <p className="text-[10px] text-gray-500 mt-1 ml-2">Menentukan kalkulasi otomatis hari perawatan laktasi (Hari ke-1 s/d Hari ke-7).</p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-2">Usia Ibu (Tahun)</label>
-                  <input 
-                    type="number" 
-                    value={tempProfile.usia || ""} 
-                    onChange={(e) => setTempProfile({ ...tempProfile, usia: e.target.value ? parseInt(e.target.value) : undefined })}
-                    placeholder="Usia Bunda"
-                    className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 text-sm text-gray-800 font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" 
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-2">Anak Ke-berapa</label>
-                  <input 
-                    type="number" 
-                    value={tempProfile.anak_ke_berapa || ""} 
-                    onChange={(e) => setTempProfile({ ...tempProfile, anak_ke_berapa: e.target.value ? parseInt(e.target.value) : undefined })}
-                    placeholder="Contoh: 1, 2"
-                    className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 text-sm text-gray-800 font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" 
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-2">Pendidikan Terakhir</label>
-                <select 
-                  value={tempProfile.pendidikan || ""} 
-                  onChange={(e) => setTempProfile({ ...tempProfile, pendidikan: e.target.value ? e.target.value as any : undefined })}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 text-sm text-gray-800 font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                >
-                  <option value="">Pilih Pendidikan</option>
-                  <option value="SD">SD</option>
-                  <option value="SMP">SMP</option>
-                  <option value="SMA">SMA</option>
-                  <option value="D3">D3</option>
-                  <option value="S1">S1</option>
-                  <option value="S2">S2</option>
-                  <option value="S3">S3</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-2">Pekerjaan</label>
-                <input 
-                  type="text" 
-                  value={tempProfile.pekerjaan || ""} 
-                  onChange={(e) => setTempProfile({ ...tempProfile, pekerjaan: e.target.value })}
-                  placeholder="Pekerjaan saat ini"
-                  className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 text-sm text-gray-800 font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" 
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-2">Alamat Lengkap</label>
-                <textarea 
-                  value={tempProfile.alamat || ""} 
-                  onChange={(e) => setTempProfile({ ...tempProfile, alamat: e.target.value })}
-                  placeholder="Alamat domisili lengkap Bunda..."
-                  rows={2}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 text-sm text-gray-800 font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none" 
-                />
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="shrink-0 pt-4 border-t border-gray-100 flex gap-3">
-              <button 
-                type="button" 
-                onClick={() => setIsEditing(false)}
-                className="flex-1 bg-gray-50 text-gray-500 py-3.5 px-6 rounded-2xl font-bold hover:bg-gray-100 transition-colors"
-              >
-                Batal
-              </button>
-              <button 
-                type="submit"
-                className="flex-1 flex items-center justify-center gap-2 bg-primary text-white py-3.5 px-6 rounded-2xl font-bold shadow-md shadow-primary/20 hover:bg-primary-hover transition-colors"
-              >
-                <Check size={18} />
-                Simpan
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
     </div>
   );
 }

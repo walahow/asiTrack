@@ -1,14 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Sparkles, Calendar, BookOpen, MapPin, Briefcase, Bell, Smile, AlertCircle } from "lucide-react";
+import { Sparkles, Calendar, BookOpen, MapPin, Briefcase, Bell, Smile, AlertCircle, User, AtSign, Loader2 } from "lucide-react";
 import { requestPushPermission } from "@/lib/firebase/client";
+import { toZonedTime } from "date-fns-tz";
+import { format } from "date-fns";
 
 export default function OnboardingPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
+    nama_lengkap: "",
+    username: "",
+    tgl_melahirkan: "",
     usia: "",
     anak_ke_berapa: "",
     alamat: "",
@@ -20,6 +25,51 @@ export default function OnboardingPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [initialFetch, setInitialFetch] = useState(true);
+
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const res = await fetch("/api/user/profile");
+        const data = await res.json();
+        if (res.ok && data.status === "success" && data.user) {
+          let tglStr = "";
+          if (data.user.tgl_melahirkan) {
+            const d = new Date(data.user.tgl_melahirkan);
+            const wibDate = toZonedTime(d, "Asia/Jakarta");
+            tglStr = format(wibDate, "yyyy-MM-dd");
+          }
+          let trueNotifEnabled = !!data.user.notif_enabled;
+          
+          // Verify against browser permission if available
+          if (typeof window !== "undefined" && "Notification" in window) {
+            if (Notification.permission === "denied" || Notification.permission === "default") {
+              trueNotifEnabled = false;
+            }
+          }
+
+          setFormData((prev) => ({
+            ...prev,
+            nama_lengkap: data.user.nama_lengkap || "",
+            username: data.user.username || "",
+            tgl_melahirkan: tglStr,
+            usia: data.user.usia || "",
+            anak_ke_berapa: data.user.anak_ke_berapa || "",
+            alamat: data.user.alamat || "",
+            pendidikan: data.user.pendidikan || "",
+            pekerjaan: data.user.pekerjaan || "",
+            notif_enabled: trueNotifEnabled,
+            fcm_token: trueNotifEnabled ? data.user.fcm_token : null,
+          }));
+        }
+      } catch (err) {
+        console.error("Failed to fetch initial profile", err);
+      } finally {
+        setInitialFetch(false);
+      }
+    }
+    fetchProfile();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -30,6 +80,15 @@ export default function OnboardingPage() {
   };
 
   const handleToggle = async () => {
+    // If the browser strictly denies notifications, we cannot even ask
+    if (typeof window !== "undefined" && "Notification" in window) {
+      if (Notification.permission === "denied") {
+        setError("Bunda telah memblokir notifikasi di browser. Mohon izinkan notifikasi melalui pengaturan browser.");
+        setFormData((prev) => ({ ...prev, notif_enabled: false, fcm_token: null }));
+        return;
+      }
+    }
+
     if (!formData.notif_enabled) {
       // Trying to enable
       try {
@@ -42,10 +101,12 @@ export default function OnboardingPage() {
           }));
         } else {
           setError("Gagal mengaktifkan notifikasi. Pastikan Anda mengizinkan notifikasi di browser.");
+          setFormData((prev) => ({ ...prev, notif_enabled: false, fcm_token: null }));
         }
       } catch (err) {
         console.error(err);
         setError("Terjadi kesalahan saat mengaktifkan notifikasi.");
+        setFormData((prev) => ({ ...prev, notif_enabled: false, fcm_token: null }));
       }
     } else {
       // Disabling
@@ -133,6 +194,68 @@ export default function OnboardingPage() {
               <span>{success}</span>
             </div>
           )}
+
+          {/* Core Fields */}
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <label htmlFor="nama_lengkap" className="text-[11px] font-bold text-gray-700 block">
+                Nama Lengkap *
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                  <User size={16} />
+                </div>
+                <input
+                  type="text"
+                  name="nama_lengkap"
+                  id="nama_lengkap"
+                  required
+                  placeholder="Nama Lengkap Bunda"
+                  value={formData.nama_lengkap}
+                  onChange={handleChange}
+                  className="w-full pl-8 pr-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-semibold text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-all placeholder:text-gray-400"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label htmlFor="username" className="text-[11px] font-bold text-gray-700 block">
+                Username *
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                  <AtSign size={16} />
+                </div>
+                <input
+                  type="text"
+                  name="username"
+                  id="username"
+                  required
+                  placeholder="username_bunda"
+                  value={formData.username}
+                  onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '') }))}
+                  className="w-full pl-8 pr-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-semibold text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-all placeholder:text-gray-400"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1 pb-2">
+              <label htmlFor="tgl_melahirkan" className="text-[11px] font-bold text-gray-700 block">
+                Tanggal Melahirkan *
+              </label>
+              <input
+                type="date"
+                name="tgl_melahirkan"
+                id="tgl_melahirkan"
+                required
+                value={formData.tgl_melahirkan}
+                onChange={handleChange}
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-semibold text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-all placeholder:text-gray-400"
+              />
+            </div>
+          </div>
+
+          <hr className="border-gray-50" />
 
           {/* Usia & Anak Ke-berapa (Grid Row) */}
           <div className="grid grid-cols-2 gap-3">

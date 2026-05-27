@@ -32,6 +32,12 @@ export async function sendPushNotification(token: string, title: string, body: s
         title,
         body,
       },
+      webpush: {
+        notification: {
+          icon: '/logo.png',
+          badge: '/logo.png',
+        }
+      },
       data,
       token,
     };
@@ -62,6 +68,12 @@ export async function sendMulticastPushNotification(tokens: string[], title: str
       notification: {
         title,
         body,
+      },
+      webpush: {
+        notification: {
+          icon: '/logo.png',
+          badge: '/logo.png',
+        }
       },
       data,
       tokens,

@@ -71,7 +71,8 @@ export async function PUT(request: Request) {
       alamat, 
       pendidikan, 
       pekerjaan, 
-      notif_enabled 
+      notif_enabled,
+      fcm_token
     } = body;
 
     // Optional validations
@@ -110,6 +111,7 @@ export async function PUT(request: Request) {
     if (pendidikan !== undefined) updateData.pendidikan = pendidikan || null;
     if (pekerjaan !== undefined) updateData.pekerjaan = pekerjaan;
     if (notif_enabled !== undefined) updateData.notif_enabled = !!notif_enabled;
+    if (fcm_token !== undefined) updateData.fcm_token = fcm_token;
 
     if (nama_lengkap !== undefined) {
       if (!nama_lengkap.trim()) {

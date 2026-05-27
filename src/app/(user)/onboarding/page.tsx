@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Sparkles, Calendar, BookOpen, MapPin, Briefcase, Bell, Smile, AlertCircle } from "lucide-react";
+import { requestPushPermission } from "@/lib/firebase/client";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -14,6 +15,7 @@ export default function OnboardingPage() {
     pendidikan: "",
     pekerjaan: "",
     notif_enabled: false,
+    fcm_token: null as string | null,
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -27,11 +29,32 @@ export default function OnboardingPage() {
     }));
   };
 
-  const handleToggle = () => {
-    setFormData((prev) => ({
-      ...prev,
-      notif_enabled: !prev.notif_enabled,
-    }));
+  const handleToggle = async () => {
+    if (!formData.notif_enabled) {
+      // Trying to enable
+      try {
+        const token = await requestPushPermission();
+        if (token) {
+          setFormData((prev) => ({
+            ...prev,
+            notif_enabled: true,
+            fcm_token: token,
+          }));
+        } else {
+          setError("Gagal mengaktifkan notifikasi. Pastikan Anda mengizinkan notifikasi di browser.");
+        }
+      } catch (err) {
+        console.error(err);
+        setError("Terjadi kesalahan saat mengaktifkan notifikasi.");
+      }
+    } else {
+      // Disabling
+      setFormData((prev) => ({
+        ...prev,
+        notif_enabled: false,
+        fcm_token: null,
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

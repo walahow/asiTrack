@@ -271,7 +271,7 @@ export default function DashboardHome() {
             <div>
               <h4 className="text-xs font-bold text-gray-800 leading-tight">Pengingat Belum Aktif!</h4>
               <p className="text-[10px] text-gray-500 mt-0.5 leading-normal max-w-[200px]">
-                Aktifkan notifikasi laktasi 3x sehari agar progres Bunda selalu terpantau.
+                Aktifkan notifikasi laktasi 2x sehari agar progres Bunda selalu terpantau.
               </p>
             </div>
           </div>

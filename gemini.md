@@ -26,7 +26,7 @@ Based on initial alignments, we are utilizing modern, robust stacks:
 | **Database** | MongoDB Atlas | Managed Mongoose ODM with connection pooling |
 | **Auth** | NextAuth.js v5 (Auth.js) | Dual Credentials Provider (`user-credentials` & `admin-credentials`) |
 | **Notifications** | Firebase Cloud Messaging (FCM) | Resilient service worker. Equipped with a **mock fallback** system to support local testing without active keys |
-| **Scheduler** | Vercel Cron | 3x daily cron jobs (Morning, Afternoon, Evening WIB) |
+| **Scheduler** | Vercel Cron | 2x daily cron jobs (Morning, Evening WIB) |
 | **Date Helpers** | `date-fns` & `date-fns-tz` | Hardened timezone calculations to enforce WIB (UTC+7) |
 | **Utilities** | PapaParse (CSV), TipTap (Rich Editor) | Data export tools and rich content editors |
 

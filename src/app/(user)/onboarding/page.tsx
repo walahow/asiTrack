@@ -381,7 +381,7 @@ export default function OnboardingPage() {
               <div>
                 <h4 className="text-xs font-bold text-gray-700 leading-tight">Pengingat Laktasi Harian</h4>
                 <p className="text-[10px] text-gray-400 mt-0.5 leading-normal">
-                  Aktifkan in-app pengingat jadwal ASI 3x sehari agar tetap terpantau.
+                  Aktifkan in-app pengingat jadwal ASI 2x sehari agar tetap terpantau.
                 </p>
               </div>
             </div>

@@ -72,7 +72,7 @@ export default function LandingPage() {
               </div>
               <div>
                 <h4 className="text-xs font-bold text-gray-700">Notifikasi Pengingat Rutin</h4>
-                <p className="text-[11px] text-gray-400">Pengingat 3x sehari agar Bunda tidak melewatkan catatan</p>
+                <p className="text-[11px] text-gray-400">Pengingat 2x sehari agar Bunda tidak melewatkan catatan</p>
               </div>
             </div>
           </div>

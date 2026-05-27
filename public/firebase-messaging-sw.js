@@ -25,14 +25,18 @@ try {
       '[firebase-messaging-sw.js] Received background message ',
       payload
     );
-    // Customize notification here
-    const notificationTitle = payload.notification?.title || 'asiTrack Reminder';
-    const notificationOptions = {
-      body: payload.notification?.body,
-      icon: '/logo.png'
-    };
+    
+    // If payload contains a native 'notification' object, Firebase SDK will show it automatically.
+    // We only call showNotification manually if it's a data-only payload to avoid duplicate banners.
+    if (!payload.notification) {
+      const notificationTitle = payload.data?.title || 'asiTrack Reminder';
+      const notificationOptions = {
+        body: payload.data?.body,
+        icon: '/logo.png'
+      };
 
-    self.registration.showNotification(notificationTitle, notificationOptions);
+      self.registration.showNotification(notificationTitle, notificationOptions);
+    }
   });
 } catch (error) {
   console.log('[firebase-messaging-sw.js] Running in mock/fallback mode.');

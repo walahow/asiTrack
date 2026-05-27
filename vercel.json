@@ -5,10 +5,6 @@
       "schedule": "0 1 * * *"
     },
     {
-      "path": "/api/cron/send-notification?slot=afternoon",
-      "schedule": "0 6 * * *"
-    },
-    {
       "path": "/api/cron/send-notification?slot=evening",
       "schedule": "0 12 * * *"
     }

@@ -39,12 +39,12 @@ export default function OnboardingPage() {
             const wibDate = toZonedTime(d, "Asia/Jakarta");
             tglStr = format(wibDate, "yyyy-MM-dd");
           }
-          let trueNotifEnabled = !!data.user.notif_enabled;
+          let localDeviceEnabled = !!data.user.notif_enabled;
           
-          // Verify against browser permission if available
+          // In a multi-device setup, the switch should show OFF if THIS specific device hasn't granted permission yet
           if (typeof window !== "undefined" && "Notification" in window) {
-            if (Notification.permission === "denied" || Notification.permission === "default") {
-              trueNotifEnabled = false;
+            if (Notification.permission !== "granted") {
+              localDeviceEnabled = false;
             }
           }
 
@@ -58,8 +58,8 @@ export default function OnboardingPage() {
             alamat: data.user.alamat || "",
             pendidikan: data.user.pendidikan || "",
             pekerjaan: data.user.pekerjaan || "",
-            notif_enabled: trueNotifEnabled,
-            fcm_token: trueNotifEnabled ? data.user.fcm_token : null,
+            notif_enabled: localDeviceEnabled,
+            fcm_token: localDeviceEnabled ? data.user.fcm_token : null,
           }));
         }
       } catch (err) {

@@ -16,8 +16,8 @@ async function forceEligibility() {
   const responsesCollection = db.collection('responses');
   const questionsCollection = db.collection('questions');
 
-  // Find a user who has notif_enabled: true and an fcm_token
-  const user = await usersCollection.findOne({ notif_enabled: true, fcm_token: { $ne: null } });
+  // Find a user who has notif_enabled: true and an fcm_tokens array
+  const user = await usersCollection.findOne({ notif_enabled: true, fcm_tokens: { $exists: true, $not: { $size: 0 } } });
   
   if (!user) {
     console.log("No user found with notifications enabled and an FCM token. Did you toggle it on the frontend?");

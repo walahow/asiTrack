@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Check, X, Sparkles, PartyPopper, CheckCircle2, CircleDashed, Calendar, ShieldCheck, Heart, AlertCircle, Smile } from "lucide-react";
+import { Check, X, Sparkles, PartyPopper, CheckCircle2, CircleDashed, Calendar, ShieldCheck, Heart, AlertCircle, Smile, BellOff, ChevronRight } from "lucide-react";
 
 interface Question {
   _id: string;
@@ -31,6 +31,7 @@ interface TrackingState {
   completed: boolean;
   pendingDays: number[];
   profile_completed: boolean;
+  notif_enabled: boolean;
   userResponses: UserResponse[];
 }
 
@@ -52,6 +53,7 @@ export default function DashboardHome() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isAnimating, setIsAnimating] = useState(false);
   const [tempText, setTempText] = useState("");
+  const [localNotifGranted, setLocalNotifGranted] = useState(true);
 
   const fetchData = async () => {
     try {
@@ -85,6 +87,9 @@ export default function DashboardHome() {
 
   useEffect(() => {
     fetchData();
+    if (typeof window !== "undefined" && "Notification" in window) {
+      setLocalNotifGranted(Notification.permission === "granted");
+    }
   }, []);
 
   const handleNext = (questionId: string, jawaban: string) => {
@@ -252,6 +257,29 @@ export default function DashboardHome() {
             : `Hari ke-${currentHariKe} Pelayanan Laktasi Bunda 🌸`}
         </p>
       </div>
+      
+      {/* Notification Reminder Banner */}
+      {(!state.notif_enabled || !localNotifGranted) && (
+        <Link 
+          href="/onboarding"
+          className="mb-6 flex items-center justify-between gap-3 bg-rose-50 border border-rose-100 rounded-2xl p-4 shadow-sm hover:scale-[1.01] active:scale-[0.99] transition-transform cursor-pointer group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-white text-rose-500 flex items-center justify-center shrink-0 shadow-sm">
+              <BellOff size={18} />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-gray-800 leading-tight">Pengingat Belum Aktif!</h4>
+              <p className="text-[10px] text-gray-500 mt-0.5 leading-normal max-w-[200px]">
+                Aktifkan notifikasi laktasi 3x sehari agar progres Bunda selalu terpantau.
+              </p>
+            </div>
+          </div>
+          <div className="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center shrink-0 group-hover:bg-rose-200 transition-colors">
+            <ChevronRight size={16} />
+          </div>
+        </Link>
+      )}
 
       <main className="flex flex-col gap-6 w-full max-w-3xl mx-auto">
         

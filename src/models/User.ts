@@ -10,8 +10,9 @@ export interface IUser extends Document {
   alamat?: string;
   pendidikan?: 'SD' | 'SMP' | 'SMA' | 'D3' | 'S1' | 'S2' | 'S3';
   pekerjaan?: string;
-  fcm_token?: string | null;
   notif_enabled: boolean;
+  fcm_tokens?: string[];
+  profile_fully_filled: boolean;
   profile_completed: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -61,9 +62,9 @@ const UserSchema: Schema<IUser> = new Schema(
       type: String,
       trim: true,
     },
-    fcm_token: {
-      type: String,
-      default: null,
+    fcm_tokens: {
+      type: [String],
+      default: [],
     },
     notif_enabled: {
       type: Boolean,

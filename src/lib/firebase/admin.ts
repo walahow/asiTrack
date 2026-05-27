@@ -43,3 +43,34 @@ export async function sendPushNotification(token: string, title: string, body: s
     return { success: false, error };
   }
 }
+
+/**
+ * Sends a push notification to multiple devices via Firebase Admin SDK.
+ * Fallbacks to console.log if Firebase environment variables are missing.
+ */
+export async function sendMulticastPushNotification(tokens: string[], title: string, body: string, data?: Record<string, string>) {
+  if (!tokens || tokens.length === 0) return { success: true, mocked: true, message: "No tokens provided" };
+
+  // Check if we are in mock mode (missing credentials)
+  if (!(process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) || !process.env.FIREBASE_PRIVATE_KEY) {
+    console.log(`[MOCK MULTICAST PUSH] To ${tokens.length} devices | Title: "${title}" | Body: "${body}"`);
+    return { success: true, mocked: true, count: tokens.length };
+  }
+
+  try {
+    const message = {
+      notification: {
+        title,
+        body,
+      },
+      data,
+      tokens,
+    };
+
+    const response = await admin.messaging().sendEachForMulticast(message);
+    return { success: true, response };
+  } catch (error) {
+    console.error('Error sending multicast push notification:', error);
+    return { success: false, error };
+  }
+}

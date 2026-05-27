@@ -44,14 +44,16 @@ export async function GET() {
     
     const nowWIB = new Date(nowUTC.getTime() + TIMEZONE_OFFSET);
     // Get start of today by zeroing out hours, minutes, seconds in UTC context for WIB
-    const todayWIBStart = new Date(Date.UTC(nowWIB.getUTCFullYear(), nowWIB.getUTCMonth(), nowWIB.getUTCDate()));
+    const todayWIBStart = new Date(Date.UTC(nowWIB.getUTCFullYear(), nowWIB.getUTCMonth(), nowWIB.getUTCDate()) - TIMEZONE_OFFSET);
 
     const birthDateUTC = new Date(user.tgl_melahirkan);
-    const birthWIBStart = new Date(birthDateUTC.getTime() + TIMEZONE_OFFSET);
+    const birthWIB = new Date(birthDateUTC.getTime() + TIMEZONE_OFFSET);
+    // Force align the birth date to the strict start of the WIB day
+    const birthWIBStart = new Date(Date.UTC(birthWIB.getUTCFullYear(), birthWIB.getUTCMonth(), birthWIB.getUTCDate()) - TIMEZONE_OFFSET);
     
     // hari_ke = 1 is the day after birth
     const diffTime = todayWIBStart.getTime() - birthWIBStart.getTime();
-    const currentHariKe = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const currentHariKe = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
     // Fetch active primary question
     const primaryQuestion = await Question.findOne({ is_primary: true, active: true });
@@ -102,6 +104,7 @@ export async function GET() {
         completed,
         pendingDays,
         profile_completed: user.profile_completed,
+        notif_enabled: !!user.notif_enabled,
         userResponses,
       },
     });

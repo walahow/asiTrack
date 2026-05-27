@@ -6,14 +6,14 @@ async function testPush() {
   await mongoose.connect(uri);
 
   const db = mongoose.connection.db;
-  const user = await db.collection('users').findOne({ notif_enabled: true, fcm_token: { $ne: null } });
+  const user = await db.collection('users').findOne({ notif_enabled: true, fcm_tokens: { $exists: true, $not: { $size: 0 } } });
 
   if (!user) {
     console.error("No user found.");
     process.exit(1);
   }
 
-  console.log("Found token:", user.fcm_token);
+  console.log("Found tokens:", user.fcm_tokens);
 
   const projectId = process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
@@ -36,11 +36,11 @@ async function testPush() {
         title: "Test Debug Push",
         body: "Testing what error we get",
       },
-      token: user.fcm_token,
+      tokens: user.fcm_tokens,
     };
 
-    console.log("Sending push...");
-    const response = await admin.messaging().send(message);
+    console.log(`Sending multicast push to ${user.fcm_tokens.length} devices...`);
+    const response = await admin.messaging().sendEachForMulticast(message);
     console.log("Success! Response:", response);
   } catch (error) {
     console.error("Error from Firebase Admin:", error);

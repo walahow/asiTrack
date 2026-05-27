@@ -24,8 +24,8 @@ async function debugCron() {
   const primaryQuestion = await questionsCollection.findOne({ is_primary: true });
   console.log("Primary Question:", primaryQuestion ? "Found" : "Not found!");
 
-  const users = await usersCollection.find({ notif_enabled: true, fcm_token: { $ne: null } }).toArray();
-  console.log(`Found ${users.length} users with notif_enabled=true and fcm_token set.`);
+  const users = await usersCollection.find({ notif_enabled: true, fcm_tokens: { $exists: true, $not: { $size: 0 } } }).toArray();
+  console.log(`Found ${users.length} users with notif_enabled=true and fcm_tokens set.`);
 
   const todayWIB = startOfDay(toZonedTime(new Date(), TIMEZONE));
   console.log(`todayWIB: ${todayWIB}`);
@@ -52,7 +52,7 @@ async function debugCron() {
 
       if (!existingResponse) {
         console.log(`No response for hari_ke ${currentHariKe}. SHOULD SEND PUSH!`);
-        console.log(`Token: ${user.fcm_token.substring(0, 15)}...`);
+        console.log(`Tokens: ${user.fcm_tokens.length} devices...`);
       } else {
         console.log(`Response already exists for hari_ke ${currentHariKe}. Skipping.`);
       }

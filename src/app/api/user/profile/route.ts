@@ -38,7 +38,10 @@ export async function GET() {
 
     return NextResponse.json({
       status: "success",
-      user,
+      user: {
+        ...user.toObject(),
+        fcm_token: user.fcm_tokens && user.fcm_tokens.length > 0 ? user.fcm_tokens[user.fcm_tokens.length - 1] : null,
+      },
       profile_fully_filled,
     });
   } catch (error: any) {
@@ -101,17 +104,24 @@ export async function PUT(request: Request) {
     await dbConnect();
 
     // Prepare update payload dynamically based on what was provided
-    const updateData: Record<string, any> = {
+    const $set: Record<string, any> = {
       profile_completed: true, // Complete onboarding!
     };
+    let $addToSet: Record<string, any> | undefined = undefined;
 
-    if (usia !== undefined) updateData.usia = usia ? Number(usia) : null;
-    if (anak_ke_berapa !== undefined) updateData.anak_ke_berapa = anak_ke_berapa ? Number(anak_ke_berapa) : null;
-    if (alamat !== undefined) updateData.alamat = alamat;
-    if (pendidikan !== undefined) updateData.pendidikan = pendidikan || null;
-    if (pekerjaan !== undefined) updateData.pekerjaan = pekerjaan;
-    if (notif_enabled !== undefined) updateData.notif_enabled = !!notif_enabled;
-    if (fcm_token !== undefined) updateData.fcm_token = fcm_token;
+    if (usia !== undefined) $set.usia = usia ? Number(usia) : null;
+    if (anak_ke_berapa !== undefined) $set.anak_ke_berapa = anak_ke_berapa ? Number(anak_ke_berapa) : null;
+    if (alamat !== undefined) $set.alamat = alamat;
+    if (pendidikan !== undefined) $set.pendidikan = pendidikan || null;
+    if (pekerjaan !== undefined) $set.pekerjaan = pekerjaan;
+    if (notif_enabled !== undefined) $set.notif_enabled = !!notif_enabled;
+    
+    // Multi-device array logic
+    if (notif_enabled === false) {
+      $set.fcm_tokens = [];
+    } else if (fcm_token) {
+      $addToSet = { fcm_tokens: fcm_token };
+    }
 
     if (nama_lengkap !== undefined) {
       if (!nama_lengkap.trim()) {
@@ -120,7 +130,7 @@ export async function PUT(request: Request) {
           { status: 400 }
         );
       }
-      updateData.nama_lengkap = nama_lengkap.trim();
+      $set.nama_lengkap = nama_lengkap.trim();
     }
 
     if (tgl_melahirkan !== undefined) {
@@ -130,15 +140,16 @@ export async function PUT(request: Request) {
           { status: 400 }
         );
       }
-      const birthDate = new Date(tgl_melahirkan);
+      const [year, month, day] = tgl_melahirkan.split('-');
+      // Strictly normalize to Midnight WIB (UTC+7) regardless of server timezone
+      const birthDate = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)) - (7 * 60 * 60 * 1000));
       if (isNaN(birthDate.getTime())) {
         return NextResponse.json(
           { status: "error", message: "Format tanggal melahirkan tidak valid" },
           { status: 400 }
         );
       }
-      birthDate.setHours(0, 0, 0, 0);
-      updateData.tgl_melahirkan = birthDate;
+      $set.tgl_melahirkan = birthDate;
     }
 
     if (username !== undefined) {
@@ -157,13 +168,18 @@ export async function PUT(request: Request) {
           { status: 400 }
         );
       }
-      updateData.username = cleanUsername;
+      $set.username = cleanUsername;
+    }
+
+    const updatePayload: Record<string, any> = { $set };
+    if ($addToSet) {
+      updatePayload.$addToSet = $addToSet;
     }
 
     // Update user profile
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      updateData,
+      updatePayload,
       { new: true, runValidators: true }
     );
 
@@ -181,7 +197,8 @@ export async function PUT(request: Request) {
         if (userResponses.length > 0) {
           const TIMEZONE_OFFSET = 7 * 60 * 60 * 1000; // +7 hours for WIB
           const birthDateUTC = new Date(updatedUser.tgl_melahirkan);
-          const birthWIBStart = new Date(birthDateUTC.getTime() + TIMEZONE_OFFSET);
+          const birthWIB = new Date(birthDateUTC.getTime() + TIMEZONE_OFFSET);
+          const birthWIBStart = new Date(Date.UTC(birthWIB.getUTCFullYear(), birthWIB.getUTCMonth(), birthWIB.getUTCDate()) - TIMEZONE_OFFSET);
 
           for (const r of userResponses) {
             const responseDateWIB = new Date(birthWIBStart);

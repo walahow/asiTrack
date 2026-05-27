@@ -41,9 +41,9 @@ export async function POST(request: Request) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create user
-    // Normalize tgl_melahirkan to start of day in WIB/UTC
-    const birthDate = new Date(tgl_melahirkan);
-    birthDate.setHours(0, 0, 0, 0);
+    // Normalize tgl_melahirkan to start of day in WIB/UTC (Strict math)
+    const [year, month, day] = tgl_melahirkan.split('-');
+    const birthDate = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)) - (7 * 60 * 60 * 1000));
 
     await User.create({
       nama_lengkap,

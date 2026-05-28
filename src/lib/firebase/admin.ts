@@ -27,7 +27,11 @@ export async function sendPushNotification(token: string, title: string, body: s
   }
 
   try {
-    const baseUrl = process.env.NEXTAUTH_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+    const baseUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL 
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : process.env.VERCEL_URL 
+        ? `https://${process.env.VERCEL_URL}` 
+        : (process.env.NEXTAUTH_URL || 'http://localhost:3000');
     const iconUrl = `${baseUrl.replace(/\/$/, '')}/logo.png`;
 
     const message = {
@@ -72,7 +76,11 @@ export async function sendMulticastPushNotification(tokens: string[], title: str
   }
 
   try {
-    const baseUrl = process.env.NEXTAUTH_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+    const baseUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL 
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : process.env.VERCEL_URL 
+        ? `https://${process.env.VERCEL_URL}` 
+        : (process.env.NEXTAUTH_URL || 'http://localhost:3000');
     const iconUrl = `${baseUrl.replace(/\/$/, '')}/logo.png`;
 
     const message = {

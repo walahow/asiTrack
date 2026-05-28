@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/send-notification?slot=morning",
-      "schedule": "30 10 * * *"
+      "schedule": "0 1 * * *"
     },
     {
       "path": "/api/cron/send-notification?slot=evening",

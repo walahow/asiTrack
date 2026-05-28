@@ -5,12 +5,12 @@ importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-com
 // your app's Firebase config object.
 // https://firebase.google.com/docs/web/setup#config-object
 const firebaseConfig = {
-  apiKey: new URL(location).searchParams.get("apiKey") || "mock-api-key",
-  authDomain: new URL(location).searchParams.get("authDomain") || "mock-auth-domain",
-  projectId: new URL(location).searchParams.get("projectId") || "mock-project-id",
-  storageBucket: new URL(location).searchParams.get("storageBucket") || "mock-storage-bucket",
-  messagingSenderId: new URL(location).searchParams.get("messagingSenderId") || "mock-messaging-sender-id",
-  appId: new URL(location).searchParams.get("appId") || "mock-app-id",
+  apiKey: "AIzaSyDUWflZ5pydPRbkYwdMw0us0p8AXOStjTk",
+  authDomain: "asitrack.firebaseapp.com",
+  projectId: "asitrack",
+  storageBucket: "asitrack.firebasestorage.app",
+  messagingSenderId: "527050773070",
+  appId: "1:527050773070:web:50971ae974d0b5e0cfa91f"
 };
 
 firebase.initializeApp(firebaseConfig);

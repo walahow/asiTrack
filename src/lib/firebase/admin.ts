@@ -36,9 +36,14 @@ export async function sendPushNotification(token: string, title: string, body: s
         body,
       },
       webpush: {
+        headers: {
+          Urgency: 'high'
+        },
         notification: {
           icon: iconUrl,
           badge: iconUrl,
+          tag: 'asitrack-reminder',
+          renotify: true,
         }
       },
       data,
@@ -76,9 +81,14 @@ export async function sendMulticastPushNotification(tokens: string[], title: str
         body,
       },
       webpush: {
+        headers: {
+          Urgency: 'high'
+        },
         notification: {
           icon: iconUrl,
           badge: iconUrl,
+          tag: 'asitrack-reminder',
+          renotify: true,
         }
       },
       data,

@@ -15,7 +15,7 @@ export async function GET() {
       admin = await Admin.create({
         username: "system_seeder",
         password: "dummy_password",
-        email: "seeder@asitrack.com",
+        email: "seeder@hypemom.com",
         role: "super_admin",
       });
     }

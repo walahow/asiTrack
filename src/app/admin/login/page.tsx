@@ -152,7 +152,7 @@ export default function AdminLoginPage() {
           <div className="relative w-16 h-16 rounded-2xl overflow-hidden bg-white p-3 border border-primary/10 flex items-center justify-center shadow-sm">
             <Image
               src="/logo.png"
-              alt="asiTrack Logo"
+              alt="hypemom Logo"
               fill
               sizes="64px"
               className="object-contain p-1.5"
@@ -177,7 +177,7 @@ export default function AdminLoginPage() {
         {/* Bottom space */}
         <div className="text-center mt-8">
           <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider block">
-            asiTrack Health Tech Foundation
+            hypemom Health Tech Foundation
           </span>
         </div>
 

@@ -17,7 +17,7 @@ export default function LandingPage() {
           <div className="relative w-20 h-20 rounded-[2rem] overflow-hidden bg-white p-4 border border-primary/10 flex items-center justify-center shadow-md">
             <Image
               src="/logo.png"
-              alt="asiTrack Logo"
+              alt="hypemom Logo"
               fill
               sizes="80px"
               className="object-contain p-2"
@@ -25,7 +25,7 @@ export default function LandingPage() {
             />
           </div>
           <h1 className="font-extrabold text-3xl tracking-tight text-primary font-sans mt-4">
-            asiTrack
+            hypemom
           </h1>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full mt-2">
             <Sparkles size={12} />

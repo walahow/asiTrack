@@ -33,7 +33,7 @@ export async function GET() {
 
     // Check for Time Travel Simulation offset
     const cookieStore = await cookies();
-    const simulatedOffsetStr = cookieStore.get('asiTrack_timeOffsetDays')?.value;
+    const simulatedOffsetStr = cookieStore.get('hypemom_timeOffsetDays')?.value;
     const simulatedOffsetDays = simulatedOffsetStr ? parseInt(simulatedOffsetStr, 10) : 0;
 
     // WIB Timezone day calculation using robust UTC math

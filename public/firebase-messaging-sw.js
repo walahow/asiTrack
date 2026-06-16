@@ -29,7 +29,7 @@ try {
     // If payload contains a native 'notification' object, Firebase SDK will show it automatically.
     // We only call showNotification manually if it's a data-only payload to avoid duplicate banners.
     if (!payload.notification) {
-      const notificationTitle = payload.data?.title || 'asiTrack Reminder';
+      const notificationTitle = payload.data?.title || 'hypemom Reminder';
       const notificationOptions = {
         body: payload.data?.body,
         icon: '/logo.png'

@@ -46,7 +46,7 @@ export async function sendPushNotification(token: string, title: string, body: s
         notification: {
           icon: iconUrl,
           badge: iconUrl,
-          tag: 'asitrack-reminder',
+          tag: 'hypemom-reminder',
           renotify: true,
         }
       },
@@ -95,7 +95,7 @@ export async function sendMulticastPushNotification(tokens: string[], title: str
         notification: {
           icon: iconUrl,
           badge: iconUrl,
-          tag: 'asitrack-reminder',
+          tag: 'hypemom-reminder',
           renotify: true,
         }
       },

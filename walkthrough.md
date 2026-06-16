@@ -90,3 +90,22 @@ We cleared all caching structures and completed a successful build of the entire
 - **TypeScript**: 100% typechecked in 5.6s.
 - **Next.js Turbopack Compilation**: Compiled successfully in 3.4s.
 - **Page Optimization**: Successfully generated static pages and registered dynamic REST APIs.
+
+---
+
+## 🛠️ 7. Profile Page Adjustments
+- **Notifikasi Harian Bar Removal**: Removed the "Notifikasi Harian" setting bar from the user profile page ([profile/page.tsx](file:///d:/proj/asiTrack/src/app/%28user%29/profile/page.tsx)) as notification settings are configured during onboarding.
+
+---
+
+## 🎨 8. Loading Screen Logo Container Improvements
+- **Theme-Aligned Rounded Logo Wrappers**: Upgraded the loading screens on Dashboard ([dashboard/page.tsx](file:///d:/proj/asiTrack/src/app/%28user%29/dashboard/page.tsx)), Form Checklist ([form/page.tsx](file:///d:/proj/asiTrack/src/app/%28user%29/form/page.tsx)), and History ([form/history/page.tsx](file:///d:/proj/asiTrack/src/app/%28user%29/form/history/page.tsx)) pages.
+- **Styling**: Wrapped the logo image inside a `rounded-3xl` white background with a soft border (`border-primary/10`) and shadow (`shadow-md shadow-primary/5`) to replace the generic square container, matching the warm, high-quality aesthetic of the app.
+---
+
+## 🏷️ 9. Application Rebranding to hypemom
+- **User-Facing Rebranding**: Renamed all user-facing instances of `asiTrack` to `hypemom` (or `HypeMom` depending on formatting/capitalization context) in page titles, headers, watermarks, and landing pages.
+- **Developer & Dev Ops Tweaks**:
+  - Renamed the development simulator cookie key from `asiTrack_timeOffsetDays` to `hypemom_timeOffsetDays`.
+  - Rebranded the email domains in data seeding files (e.g. `admin@asitrack.id` became `admin@hypemom.id`).
+  - Adjusted notification titles in the Vercel cron controller and background service worker.

@@ -201,8 +201,8 @@ export default function DashboardHome() {
   if (loading) {
     return (
       <div className="flex flex-col flex-1 items-center justify-center p-6 min-h-screen bg-[#FAF8F5]">
-        <div className="relative w-16 h-16 animate-bounce mb-4">
-          <Image src="/logo.png" alt="Loading Logo" fill sizes="64px" priority className="object-contain" />
+        <div className="relative w-20 h-20 bg-white border border-primary/10 rounded-3xl flex items-center justify-center shadow-md shadow-primary/5 animate-bounce mb-4 overflow-hidden">
+          <Image src="/logo.png" alt="Loading Logo" fill sizes="80px" priority className="object-contain p-3.5" />
         </div>
         <p className="text-sm font-bold text-gray-500 animate-pulse">Menghubungkan Laktasi Bunda...</p>
       </div>
@@ -266,7 +266,7 @@ export default function DashboardHome() {
           <div className="relative w-12 h-12 rounded-[1.25rem] overflow-hidden bg-primary/5 p-2 border border-primary/10 flex items-center justify-center shadow-sm">
             <Image
               src="/logo.png"
-              alt="asiTrack Logo"
+              alt="hypemom Logo"
               fill
               sizes="64px"
               className="object-contain p-1"
@@ -274,7 +274,7 @@ export default function DashboardHome() {
             />
           </div>
           <span className="font-black text-2xl tracking-tight text-primary font-sans">
-            asiTrack
+            hypemom
           </span>
         </div>
       </div>
@@ -603,7 +603,7 @@ export default function DashboardHome() {
 
           <div className="flex items-center gap-2 p-3 bg-gray-50 border border-gray-100 rounded-xl text-[10px] font-bold text-gray-400 mt-4 justify-center">
             <ShieldCheck size={14} className="text-primary shrink-0" />
-            <span>Privasi Data Bunda Terjaga &bull; asiTrack</span>
+            <span>Privasi Data Bunda Terjaga &bull; hypemom</span>
           </div>
         </div>
 

@@ -32,7 +32,7 @@ export default async function AdminLayout({
           <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-primary/5 p-1.5 border border-primary/10 flex items-center justify-center shadow-sm">
             <Image
               src="/logo.png"
-              alt="asiTrack Logo"
+              alt="hypemom Logo"
               fill
               sizes="48px"
               className="object-contain"
@@ -40,7 +40,7 @@ export default async function AdminLayout({
             />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-primary tracking-tight leading-none">asiTrack</h1>
+            <h1 className="text-2xl font-bold text-primary tracking-tight leading-none">hypemom</h1>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block mt-1.5">Admin Portal</span>
           </div>
         </div>
@@ -80,14 +80,14 @@ export default async function AdminLayout({
             <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-primary/5 p-1 border border-primary/10 flex items-center justify-center shadow-sm">
               <Image
                 src="/logo.png"
-                alt="asiTrack Logo"
+                alt="hypemom Logo"
                 fill
                 sizes="40px"
                 className="object-contain"
                 priority
               />
             </div>
-            <h1 className="text-xl font-bold text-primary tracking-tight">asiTrack</h1>
+            <h1 className="text-xl font-bold text-primary tracking-tight">hypemom</h1>
           </div>
           <MobileAdminNav />
         </header>

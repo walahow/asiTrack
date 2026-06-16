@@ -23,7 +23,7 @@ export default function DesktopUserSidebar() {
         <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-primary/5 p-1 border border-primary/10 flex items-center justify-center shadow-sm">
           <Image
             src="/logo.png"
-            alt="asiTrack Logo"
+            alt="hypemom Logo"
             fill
             sizes="40px"
             className="object-contain"
@@ -31,7 +31,7 @@ export default function DesktopUserSidebar() {
           />
         </div>
         <h1 className="text-xl font-black text-primary tracking-tight font-sans">
-          asiTrack
+          hypemom
         </h1>
       </div>
 

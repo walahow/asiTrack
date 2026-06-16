@@ -162,7 +162,7 @@ export default function OnboardingPage() {
         <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-primary/5 p-2 border border-primary/10 flex items-center justify-center shadow-sm">
           <Image
             src="/logo.png"
-            alt="asiTrack Logo"
+            alt="hypemom Logo"
             fill
             sizes="40px"
             className="object-contain p-1"
@@ -170,7 +170,7 @@ export default function OnboardingPage() {
           />
         </div>
         <span className="font-bold text-lg tracking-tight text-primary font-sans">
-          asiTrack Onboarding
+          hypemom Onboarding
         </span>
       </div>
 

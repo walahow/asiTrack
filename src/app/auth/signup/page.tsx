@@ -92,7 +92,7 @@ export default function SignupPage() {
           <div className="relative w-16 h-16 rounded-2xl overflow-hidden bg-white p-3 border border-primary/10 flex items-center justify-center shadow-sm">
             <Image
               src="/logo.png"
-              alt="asiTrack Logo"
+              alt="hypemom Logo"
               fill
               sizes="64px"
               className="object-contain p-1.5"

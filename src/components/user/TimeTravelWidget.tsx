@@ -14,7 +14,7 @@ export default function TimeTravelWidget() {
 
   useEffect(() => {
     // Read current cookie on mount
-    const match = document.cookie.match(new RegExp('(^| )asiTrack_timeOffsetDays=([^;]+)'));
+    const match = document.cookie.match(new RegExp('(^| )hypemom_timeOffsetDays=([^;]+)'));
     if (match && match[2]) {
       setOffset(parseInt(match[2], 10));
     }
@@ -22,7 +22,7 @@ export default function TimeTravelWidget() {
 
   const updateOffset = (newOffset: number) => {
     // Set cookie to expire in 1 day, accessible across the app
-    document.cookie = `asiTrack_timeOffsetDays=${newOffset}; path=/; max-age=86400`;
+    document.cookie = `hypemom_timeOffsetDays=${newOffset}; path=/; max-age=86400`;
     setOffset(newOffset);
     // Force a full refresh to re-run server side logic
     window.location.reload();

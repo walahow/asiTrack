@@ -271,16 +271,7 @@ export default function ProfilePage() {
             </div>
             <ChevronRight size={20} className="text-gray-400 group-hover:text-primary transition-colors" />
           </button>
-          
-          <button className="w-full bg-white rounded-[2rem] p-4 flex items-center justify-between shadow-sm border border-gray-100 hover:shadow-md transition-shadow group">
-            <div className="flex items-center gap-4 text-gray-700">
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center group-hover:scale-105 transition-transform">
-                <Bell size={22} />
-              </div>
-              <span className="font-bold text-lg">Notifikasi Harian</span>
-            </div>
-            <ChevronRight size={20} className="text-gray-400 group-hover:text-primary transition-colors" />
-          </button>
+
           
           <button 
             onClick={() => signOut({ callbackUrl: "/" })}

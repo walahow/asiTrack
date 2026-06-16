@@ -69,8 +69,8 @@ export default function HistoryPage() {
   if (loading) {
     return (
       <div className="flex flex-col flex-1 items-center justify-center p-6 min-h-screen bg-[#FAF8F5]">
-        <div className="relative w-16 h-16 animate-bounce mb-4">
-          <Image src="/logo.png" alt="Loading Logo" fill sizes="64px" priority className="object-contain" />
+        <div className="relative w-20 h-20 bg-white border border-primary/10 rounded-3xl flex items-center justify-center shadow-md shadow-primary/5 animate-bounce mb-4 overflow-hidden">
+          <Image src="/logo.png" alt="Loading Logo" fill sizes="80px" priority className="object-contain p-3.5" />
         </div>
         <p className="text-sm font-bold text-gray-500 animate-pulse">Memuat Catatan Laktasi...</p>
       </div>
@@ -287,10 +287,9 @@ export default function HistoryPage() {
         </section>
       )}
 
-      {/* Decorative Brand Watermark */}
       <div className="text-center mt-8">
         <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">
-          asiTrack Support Center &bull; 🌸
+          hypemom Support Center &bull; 🌸
         </span>
       </div>
 

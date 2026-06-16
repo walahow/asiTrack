@@ -20,13 +20,13 @@ export default function DesktopUserSidebar() {
   return (
     <aside className="hidden md:flex flex-col w-64 bg-white border-r border-gray-200 fixed h-full z-20 left-0 top-0">
       <div className="p-6 border-b border-gray-100 flex items-center gap-3">
-        <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-primary/5 p-1 border border-primary/10 flex items-center justify-center shadow-sm">
+        <div className="relative w-10 h-10 rounded-xl bg-white border border-primary/10 shadow-sm overflow-hidden">
           <Image
             src="/logo.png"
             alt="hypemom Logo"
             fill
             sizes="40px"
-            className="object-contain"
+            className="object-cover"
             priority
           />
         </div>

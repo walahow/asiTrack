@@ -29,13 +29,13 @@ export default async function AdminLayout({
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col hidden md:flex">
         <div className="p-6 border-b border-gray-100 flex items-center gap-4">
-          <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-primary/5 p-1.5 border border-primary/10 flex items-center justify-center shadow-sm">
+          <div className="relative w-12 h-12 rounded-xl bg-white border border-primary/10 shadow-sm overflow-hidden">
             <Image
               src="/logo.png"
               alt="hypemom Logo"
               fill
               sizes="48px"
-              className="object-contain"
+              className="object-cover"
               priority
             />
           </div>
@@ -77,13 +77,13 @@ export default async function AdminLayout({
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
         <header className="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-6 md:hidden shrink-0">
           <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-primary/5 p-1 border border-primary/10 flex items-center justify-center shadow-sm">
+            <div className="relative w-10 h-10 rounded-xl bg-white border border-primary/10 shadow-sm overflow-hidden">
               <Image
                 src="/logo.png"
                 alt="hypemom Logo"
                 fill
                 sizes="40px"
-                className="object-contain"
+                className="object-cover"
                 priority
               />
             </div>

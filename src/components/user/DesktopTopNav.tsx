@@ -25,13 +25,13 @@ export default function DesktopTopNav() {
         
         {/* Left: Logo & Brand */}
         <Link href="/dashboard" className="flex items-center gap-3 group">
-          <div className="relative w-8 h-8 rounded-xl overflow-hidden bg-primary/5 p-1 border border-primary/10 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+          <div className="relative w-8 h-8 rounded-xl bg-white border border-primary/10 shadow-sm group-hover:scale-105 transition-transform overflow-hidden">
             <Image
               src="/logo.png"
               alt="hypemom Logo"
               fill
               sizes="32px"
-              className="object-contain p-0.5"
+              className="object-cover"
               priority
             />
           </div>

@@ -149,13 +149,13 @@ export default function AdminLoginPage() {
 
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center mb-8">
-          <div className="relative w-16 h-16 rounded-2xl overflow-hidden bg-white p-3 border border-primary/10 flex items-center justify-center shadow-sm">
+          <div className="relative w-16 h-16 rounded-2xl bg-white border border-primary/10 shadow-sm overflow-hidden">
             <Image
               src="/logo.png"
               alt="hypemom Logo"
               fill
               sizes="64px"
-              className="object-contain p-1.5"
+              className="object-cover"
             />
           </div>
           <h2 className="text-2xl font-black text-gray-800 tracking-tight mt-3">Portal Administratif</h2>

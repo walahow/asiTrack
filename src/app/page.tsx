@@ -14,13 +14,13 @@ export default function LandingPage() {
         
         {/* Top Header & Logo */}
         <div className="flex flex-col items-center text-center mt-4">
-          <div className="relative w-20 h-20 rounded-[2rem] overflow-hidden bg-white p-4 border border-primary/10 flex items-center justify-center shadow-md">
+          <div className="relative w-20 h-20 rounded-[1.5rem] bg-white border border-primary/10 shadow-md overflow-hidden">
             <Image
               src="/logo.png"
               alt="hypemom Logo"
               fill
               sizes="80px"
-              className="object-contain p-2"
+              className="object-cover"
               priority
             />
           </div>

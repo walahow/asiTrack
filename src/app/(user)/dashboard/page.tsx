@@ -201,8 +201,8 @@ export default function DashboardHome() {
   if (loading) {
     return (
       <div className="flex flex-col flex-1 items-center justify-center p-6 min-h-screen bg-[#FAF8F5]">
-        <div className="relative w-20 h-20 bg-white border border-primary/10 rounded-3xl flex items-center justify-center shadow-md shadow-primary/5 animate-bounce mb-4 overflow-hidden">
-          <Image src="/logo.png" alt="Loading Logo" fill sizes="80px" priority className="object-contain p-3.5" />
+        <div className="relative w-20 h-20 bg-white border border-primary/10 rounded-3xl shadow-md shadow-primary/5 animate-bounce mb-4 overflow-hidden">
+          <Image src="/logo.png" alt="Loading Logo" fill sizes="80px" priority className="object-cover" />
         </div>
         <p className="text-sm font-bold text-gray-500 animate-pulse">Menghubungkan Laktasi Bunda...</p>
       </div>
@@ -263,13 +263,13 @@ export default function DashboardHome() {
       {/* App Header (Mobile Only) */}
       <div className="md:hidden flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
-          <div className="relative w-12 h-12 rounded-[1.25rem] overflow-hidden bg-primary/5 p-2 border border-primary/10 flex items-center justify-center shadow-sm">
+          <div className="relative w-12 h-12 rounded-[1.25rem] bg-white border border-primary/10 shadow-sm overflow-hidden">
             <Image
               src="/logo.png"
               alt="hypemom Logo"
               fill
               sizes="64px"
-              className="object-contain p-1"
+              className="object-cover"
               priority
             />
           </div>

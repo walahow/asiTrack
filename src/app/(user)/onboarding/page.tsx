@@ -159,13 +159,13 @@ export default function OnboardingPage() {
     <div className="flex flex-col flex-1 pb-10 pt-10 px-6 overflow-y-auto">
       {/* App Brand Header */}
       <div className="flex items-center gap-4 mb-6">
-        <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-primary/5 p-2 border border-primary/10 flex items-center justify-center shadow-sm">
+        <div className="relative w-10 h-10 rounded-xl bg-white border border-primary/10 shadow-sm overflow-hidden">
           <Image
             src="/logo.png"
             alt="hypemom Logo"
             fill
             sizes="40px"
-            className="object-contain p-1"
+            className="object-cover"
             priority
           />
         </div>

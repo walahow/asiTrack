@@ -19,7 +19,7 @@ export async function GET() {
       const hashedPassword = await bcrypt.hash("adminasi123", 10);
       const newAdmin = await Admin.create({
         username: "admin",
-        email: "admin@hypemom.id",
+        email: "admin@hypnomom.id",
         password: hashedPassword,
         role: "super_admin",
       });
@@ -63,12 +63,12 @@ export async function GET() {
       const defaultTemplates = [
         {
           tipe: "morning" as const,
-          message: "Selamat pagi Bunda! Jangan lupa pantau dan catat perkembangan laktasi si kecil hari ini di hypemom ya. Tetap semangat, Bunda hebat! 🌸",
+          message: "Selamat pagi Bunda! Jangan lupa pantau dan catat perkembangan laktasi si kecil hari ini di hypnomom ya. Tetap semangat, Bunda hebat! 🌸",
           active: true,
         },
         {
           tipe: "afternoon" as const,
-          message: "Selamat siang Bunda! Bagaimana kondisi laktasi siang ini? Yuk luangkan waktu sejenak untuk mengisi tracking harian Anda di hypemom. 💕",
+          message: "Selamat siang Bunda! Bagaimana kondisi laktasi siang ini? Yuk luangkan waktu sejenak untuk mengisi tracking harian Anda di hypnomom. 💕",
           active: true,
         },
         {

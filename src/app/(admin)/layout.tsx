@@ -32,7 +32,7 @@ export default async function AdminLayout({
           <div className="relative w-12 h-12 rounded-xl bg-white border border-primary/10 shadow-sm overflow-hidden">
             <Image
               src="/logo.png"
-              alt="hypemom Logo"
+              alt="hypnomom Logo"
               fill
               sizes="48px"
               className="object-cover"
@@ -40,7 +40,7 @@ export default async function AdminLayout({
             />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-primary tracking-tight leading-none">hypemom</h1>
+            <h1 className="text-2xl font-bold text-primary tracking-tight leading-none">hypnomom</h1>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block mt-1.5">Admin Portal</span>
           </div>
         </div>
@@ -80,14 +80,14 @@ export default async function AdminLayout({
             <div className="relative w-10 h-10 rounded-xl bg-white border border-primary/10 shadow-sm overflow-hidden">
               <Image
                 src="/logo.png"
-                alt="hypemom Logo"
+                alt="hypnomom Logo"
                 fill
                 sizes="40px"
                 className="object-cover"
                 priority
               />
             </div>
-            <h1 className="text-xl font-bold text-primary tracking-tight">hypemom</h1>
+            <h1 className="text-xl font-bold text-primary tracking-tight">hypnomom</h1>
           </div>
           <MobileAdminNav />
         </header>

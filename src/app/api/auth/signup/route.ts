@@ -6,10 +6,10 @@ import bcrypt from "bcryptjs";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { nama_lengkap, username, password, tgl_melahirkan } = body;
+    const { nama_lengkap, username, password } = body;
 
     // Validation checks
-    if (!nama_lengkap || !username || !password || !tgl_melahirkan) {
+    if (!nama_lengkap || !username || !password) {
       return NextResponse.json(
         { status: "error", message: "Semua kolom wajib diisi" },
         { status: 400 }
@@ -41,8 +41,10 @@ export async function POST(request: Request) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create user
-    // Normalize tgl_melahirkan to start of day in WIB/UTC (Strict math)
-    const [year, month, day] = tgl_melahirkan.split('-');
+    // Automatically set tgl_melahirkan to today's date in WIB
+    // Normalize to start of day in WIB/UTC
+    const nowStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+    const [year, month, day] = nowStr.split('-');
     const birthDate = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)) - (7 * 60 * 60 * 1000));
 
     await User.create({

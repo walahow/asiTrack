@@ -74,7 +74,7 @@ function LoginForm() {
   };
 
   return (
-    <div className="bg-white rounded-[2rem] p-6 shadow-[0_10px_35px_rgba(0,0,0,0.03)] border border-gray-100 relative overflow-hidden">
+    <div className="bg-white/95 backdrop-blur-xl rounded-[2rem] p-7 shadow-[0_20px_60px_rgba(0,0,0,0.15)] border border-white/50 relative overflow-hidden z-10">
       <form onSubmit={handleSubmit} className="space-y-4">
         
         {/* Alerts */}
@@ -152,18 +152,20 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-[#FAF8F5] flex flex-col justify-between relative overflow-hidden">
-      {/* Background blurs */}
-      <div className="absolute top-[-10%] left-[-20%] w-[80%] h-[30%] bg-primary/10 rounded-full blur-[80px] -z-10"></div>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-primary to-purple-900 flex flex-col justify-between relative overflow-hidden">
+      {/* Background decorative shapes */}
+      <div className="absolute top-[-10%] left-[-20%] w-[80%] h-[40%] bg-purple-400/30 rounded-full blur-[100px] -z-10 animate-pulse"></div>
+      <div className="absolute bottom-[-10%] right-[-20%] w-[80%] h-[50%] bg-indigo-400/20 rounded-full blur-[100px] -z-10"></div>
+      <div className="absolute top-[40%] right-[-10%] w-[40%] h-[40%] bg-fuchsia-500/20 rounded-full blur-[120px] -z-10"></div>
       
       {/* Main Container */}
-      <div className="w-full max-w-md mx-auto flex-1 flex flex-col justify-center px-6 py-8">
+      <div className="w-full max-w-md mx-auto flex-1 flex flex-col justify-center px-6 py-8 z-10">
         
         {/* Back Link */}
-        <div className="mb-6">
+        <div className="mb-6 z-10">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-primary transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-bold text-white/70 hover:text-white transition-colors"
           >
             <ArrowLeft size={16} />
             Kembali ke Landing
@@ -171,18 +173,20 @@ export default function LoginPage() {
         </div>
 
         {/* Brand Header */}
-        <div className="flex flex-col items-center text-center mb-8">
-          <div className="relative w-16 h-16 rounded-2xl bg-white border border-primary/10 shadow-sm overflow-hidden">
-            <Image
-              src="/logo.png"
-              alt="hypemom Logo"
-              fill
-              sizes="64px"
-              className="object-cover"
-            />
+        <div className="flex flex-col items-center text-center mb-8 z-10">
+          <div className="relative w-20 h-20 rounded-2xl bg-white border border-white/20 shadow-xl overflow-hidden p-1">
+            <div className="relative w-full h-full rounded-[1rem] overflow-hidden">
+              <Image
+                src="/logo.png"
+                alt="hypnomom Logo"
+                fill
+                sizes="80px"
+                className="object-cover"
+              />
+            </div>
           </div>
-          <h2 className="text-2xl font-black text-gray-800 tracking-tight mt-3">Selamat Datang Bunda</h2>
-          <p className="text-gray-500 text-xs font-medium mt-1">Gunakan akun terdaftar Bunda untuk masuk ke aplikasi</p>
+          <h2 className="text-3xl font-black text-white tracking-tight mt-4 drop-shadow-md">Selamat Datang</h2>
+          <p className="text-white/80 text-sm font-medium mt-1.5">Gunakan akun terdaftar Bunda untuk masuk</p>
         </div>
 
         {/* Suspense Wrapped Form */}
@@ -195,10 +199,10 @@ export default function LoginPage() {
         </Suspense>
 
         {/* Bottom signup Link */}
-        <div className="text-center mt-6">
-          <p className="text-xs text-gray-500 font-medium">
+        <div className="text-center mt-6 z-10">
+          <p className="text-xs text-white/70 font-medium">
             Belum terdaftar?{" "}
-            <Link href="/auth/signup" className="text-primary font-bold hover:underline">
+            <Link href="/auth/signup" className="text-white font-bold hover:underline">
               Daftar sekarang
             </Link>
           </p>

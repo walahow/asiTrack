@@ -103,9 +103,9 @@ We cleared all caching structures and completed a successful build of the entire
 - **Styling**: Wrapped the logo image inside a `rounded-3xl` white background with a soft border (`border-primary/10`) and shadow (`shadow-md shadow-primary/5`) to replace the generic square container, matching the warm, high-quality aesthetic of the app.
 ---
 
-## 🏷️ 9. Application Rebranding to hypemom
-- **User-Facing Rebranding**: Renamed all user-facing instances of `asiTrack` to `hypemom` (or `HypeMom` depending on formatting/capitalization context) in page titles, headers, watermarks, and landing pages.
+## 🏷️ 9. Application Rebranding to hypnomom
+- **User-Facing Rebranding**: Renamed all user-facing instances of `asiTrack` to `hypnomom` (or `HypeMom` depending on formatting/capitalization context) in page titles, headers, watermarks, and landing pages.
 - **Developer & Dev Ops Tweaks**:
-  - Renamed the development simulator cookie key from `asiTrack_timeOffsetDays` to `hypemom_timeOffsetDays`.
-  - Rebranded the email domains in data seeding files (e.g. `admin@asitrack.id` became `admin@hypemom.id`).
+  - Renamed the development simulator cookie key from `asiTrack_timeOffsetDays` to `hypnomom_timeOffsetDays`.
+  - Rebranded the email domains in data seeding files (e.g. `admin@asitrack.id` became `admin@hypnomom.id`).
   - Adjusted notification titles in the Vercel cron controller and background service worker.

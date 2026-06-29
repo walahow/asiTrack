@@ -22,7 +22,7 @@ async function seed() {
 
   const username = process.env.SUPER_ADMIN_USERNAME || 'admin';
   const password = process.env.SUPER_ADMIN_PASSWORD || 'adminasi123';
-  const email = process.env.SUPER_ADMIN_EMAIL || 'admin@hypemom.id';
+  const email = process.env.SUPER_ADMIN_EMAIL || 'admin@hypnomom.id';
 
   console.log("Connecting to MongoDB...");
   try {

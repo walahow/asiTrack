@@ -103,7 +103,8 @@ export default function VideoList() {
                 <Image 
                   src={video.thumbnail_url} 
                   alt={video.title} 
-                  fill 
+                  fill
+                  unoptimized={true}
                   className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" 
                 />
                 

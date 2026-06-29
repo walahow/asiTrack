@@ -23,7 +23,7 @@ export default function DesktopUserSidebar() {
         <div className="relative w-10 h-10 rounded-xl bg-white border border-primary/10 shadow-sm overflow-hidden">
           <Image
             src="/logo.png"
-            alt="hypemom Logo"
+            alt="hypnomom Logo"
             fill
             sizes="40px"
             className="object-cover"
@@ -31,7 +31,7 @@ export default function DesktopUserSidebar() {
           />
         </div>
         <h1 className="text-xl font-black text-primary tracking-tight font-sans">
-          hypemom
+          hypnomom
         </h1>
       </div>
 

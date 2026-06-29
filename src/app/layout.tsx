@@ -8,7 +8,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "hypemom | Web Tracking ASI Ibu Menyusui",
+  title: "hypnomom | Web Tracking ASI Ibu Menyusui",
   description: "Monitor early lactation progress and receive maternal education.",
 };
 

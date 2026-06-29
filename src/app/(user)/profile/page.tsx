@@ -99,9 +99,8 @@ export default function ProfilePage() {
       birth.setHours(0, 0, 0, 0);
       
       const diffTime = today.getTime() - birth.getTime();
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
       
-      if (diffDays < 1) return "Belum Melahirkan (Masa Persiapan)";
       if (diffDays > 7) return "Selesai Pelacakan (Hari 7+)";
       return `Hari ke-${diffDays} Menyusui`;
     } catch {
@@ -115,7 +114,7 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col flex-1 items-center justify-center min-h-[50vh] bg-[#FAF8F5]">
+      <div className="flex flex-col flex-1 items-center justify-center min-h-[50vh]">
         <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin"></div>
         <p className="text-gray-500 font-medium mt-4">Memuat profil Bunda...</p>
       </div>
@@ -124,7 +123,7 @@ export default function ProfilePage() {
 
   if (error) {
     return (
-      <div className="flex flex-col flex-1 items-center justify-center min-h-[50vh] bg-[#FAF8F5] px-6 text-center">
+      <div className="flex flex-col flex-1 items-center justify-center min-h-[50vh] px-6 text-center">
         <div className="w-16 h-16 bg-rose-50 text-rose-500 rounded-3xl flex items-center justify-center mb-4">
           <X size={32} />
         </div>
@@ -141,7 +140,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="flex flex-col flex-1 pb-32 md:pb-12 pt-10 px-6 max-w-4xl mx-auto w-full bg-[#FAF8F5] md:bg-transparent">
+    <div className="flex flex-col flex-1 pb-32 md:pb-12 pt-10 px-6 max-w-4xl mx-auto w-full relative">
       {/* Toast Notification */}
       {showToast && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[200] bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-lg flex items-center gap-2 font-semibold text-sm animate-in fade-in slide-in-from-top-4 duration-300">

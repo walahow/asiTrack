@@ -76,7 +76,7 @@ export async function GET(request: Request) {
       status: 200,
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="hypemom_export_${new Date().toISOString().split("T")[0]}.csv"`,
+        "Content-Disposition": `attachment; filename="hypnomom_export_${new Date().toISOString().split("T")[0]}.csv"`,
       },
     });
   } catch (error: any) {

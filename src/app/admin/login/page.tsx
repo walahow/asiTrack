@@ -152,7 +152,7 @@ export default function AdminLoginPage() {
           <div className="relative w-16 h-16 rounded-2xl bg-white border border-primary/10 shadow-sm overflow-hidden">
             <Image
               src="/logo.png"
-              alt="hypemom Logo"
+              alt="hypnomom Logo"
               fill
               sizes="64px"
               className="object-cover"
@@ -177,7 +177,7 @@ export default function AdminLoginPage() {
         {/* Bottom space */}
         <div className="text-center mt-8">
           <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider block">
-            hypemom Health Tech Foundation
+            hypnomom Health Tech Foundation
           </span>
         </div>
 

@@ -200,7 +200,7 @@ export default function DashboardHome() {
 
   if (loading) {
     return (
-      <div className="flex flex-col flex-1 items-center justify-center p-6 min-h-screen bg-[#FAF8F5]">
+      <div className="flex flex-col flex-1 items-center justify-center p-6 min-h-screen">
         <div className="relative w-20 h-20 bg-white border border-primary/10 rounded-3xl shadow-md shadow-primary/5 animate-bounce mb-4 overflow-hidden">
           <Image src="/logo.png" alt="Loading Logo" fill sizes="80px" priority className="object-cover" />
         </div>
@@ -211,7 +211,7 @@ export default function DashboardHome() {
 
   if (error || !state) {
     return (
-      <div className="flex flex-col flex-1 items-center justify-center p-8 text-center min-h-screen bg-[#FAF8F5]">
+      <div className="flex flex-col flex-1 items-center justify-center p-8 text-center min-h-screen">
         <AlertCircle size={48} className="text-rose-500 mb-4 animate-shake" />
         <h3 className="text-lg font-bold text-gray-800">Gagal Memuat Dashboard</h3>
         <p className="text-xs text-gray-500 mt-2 max-w-xs">{error || "Silakan masuk kembali."}</p>
@@ -266,7 +266,7 @@ export default function DashboardHome() {
           <div className="relative w-12 h-12 rounded-[1.25rem] bg-white border border-primary/10 shadow-sm overflow-hidden">
             <Image
               src="/logo.png"
-              alt="hypemom Logo"
+              alt="hypnomom Logo"
               fill
               sizes="64px"
               className="object-cover"
@@ -274,20 +274,20 @@ export default function DashboardHome() {
             />
           </div>
           <span className="font-black text-2xl tracking-tight text-primary font-sans">
-            hypemom
+            hypnomom
           </span>
         </div>
       </div>
 
       {/* Greeting Banner */}
-      <div className="mb-6 bg-gradient-to-br from-[#F5F3FF] to-white rounded-[2rem] p-6 border border-primary/5 shadow-sm relative overflow-hidden">
-        <div className="absolute right-[-10px] bottom-[-10px] w-24 h-24 text-primary/5 shrink-0">
-          <Heart size={96} className="fill-primary/5 stroke-none" />
+      <div className="mb-6 bg-white/80 backdrop-blur-md rounded-[2rem] p-6 shadow-sm border border-white/50 relative overflow-hidden">
+        <div className="absolute right-[-10px] bottom-[-10px] w-24 h-24 text-primary/10 shrink-0">
+          <Heart size={96} className="fill-primary/10 stroke-none" />
         </div>
         <h1 className="text-2xl font-black text-gray-800 tracking-tight leading-tight">
           Halo, <span className="text-primary">Bunda {nama_lengkap}!</span>
         </h1>
-        <p className="text-xs text-gray-500 mt-1 font-semibold leading-relaxed">
+        <p className="text-xs text-gray-600 mt-1 font-semibold leading-relaxed">
           {currentHariKe < 1 
             ? "Mempersiapkan penyambutan si kecil 👶" 
             : `Hari ke-${currentHariKe} Pelayanan Laktasi Bunda 🌸`}
@@ -337,79 +337,43 @@ export default function DashboardHome() {
               Bunda sungguh luar biasa! 7 hari pertama pasca kelahiran telah berhasil dipantau. Produksi ASI Bunda kini tercatat dengan baik demi awal terbaik bagi si kecil.
             </p>
             <Link
-              href="/form/history"
+              href="/form"
               className="inline-flex items-center justify-center bg-emerald-600 text-white py-3 px-8 rounded-xl text-xs font-bold shadow-md hover:scale-[1.01] active:scale-[0.99] transition-all"
             >
-              Lihat Histori Catatan
+              Lihat Riwayat Catatan
             </Link>
           </section>
         ) : currentHariKe < 1 ? (
           /* Case 2: Waiting for birth date */
-          <section className="bg-white rounded-[2.5rem] p-8 shadow-[0_10px_35px_rgba(0,0,0,0.03)] border border-gray-100 text-center">
+          <section className="bg-white/90 backdrop-blur-md rounded-[2.5rem] p-8 shadow-[0_10px_35px_rgba(0,0,0,0.03)] border border-white/50 text-center">
             <div className="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-5 animate-pulse">
               <Calendar size={32} />
             </div>
             <h2 className="text-lg font-bold text-gray-800 mb-2">Menanti Hari Bahagia...</h2>
-            <p className="text-xs text-gray-400 leading-relaxed max-w-xs mx-auto">
+            <p className="text-xs text-gray-600 leading-relaxed max-w-xs mx-auto">
               Sistem pencatatan laktasi otomatis akan terbuka 1 hari setelah tanggal melahirkan yang Bunda daftarkan. Tetap tenang, persiapkan energi, dan selamat menanti kelahiran si kecil! 💕
             </p>
           </section>
         ) : !isTodayPending ? (
-          /* Case 3: Today is already answered, but there are past pending days to complete */
-          <section className="bg-gradient-to-br from-[#F5F3FF] to-white rounded-[2.5rem] p-8 shadow-[0_10px_35px_rgba(0,0,0,0.02)] border border-primary/10 relative overflow-hidden text-center">
-            {hasPastPending && (
-              <Link 
-                href="/form" 
-                className="absolute top-4 right-4 flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 hover:bg-amber-200 text-amber-700 text-[10px] font-extrabold rounded-full shadow-sm animate-pulse border border-amber-200 cursor-pointer z-20"
-              >
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500"></span>
-                </span>
-                {otherPendingDays.length} Hari Terlewat
-              </Link>
-            )}
-            
+          <section className="bg-white/90 backdrop-blur-md rounded-[2.5rem] p-8 shadow-[0_10px_35px_rgba(0,0,0,0.02)] border border-white/50 relative overflow-hidden text-center">
             <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 size={24} />
             </div>
             <h2 className="text-lg font-extrabold text-gray-800 mb-1">Catatan Hari Ini Selesai!</h2>
-            <p className="text-xs text-gray-500 max-w-xs mx-auto mb-5 leading-relaxed">
+            <p className="text-xs text-gray-600 max-w-xs mx-auto mb-5 leading-relaxed">
               Laporan hari ini sudah terisi dengan aman. Terima kasih atas disiplin Bunda!
             </p>
-            {hasPastPending ? (
-              <Link
-                href="/form"
-                className="inline-flex items-center justify-center bg-primary text-white py-3 px-6 rounded-xl text-xs font-bold shadow-md hover:scale-[1.01] active:scale-[0.99] transition-all"
-              >
-                Lengkapi {otherPendingDays.length} Hari Terlewat
-              </Link>
-            ) : (
-              <Link
-                href="/form/history"
-                className="inline-flex items-center justify-center bg-gray-50 text-gray-700 border border-gray-200 py-3 px-6 rounded-xl text-xs font-bold shadow-sm hover:bg-gray-100 transition-all"
-              >
-                Lihat Histori Catatan
-              </Link>
-            )}
+            <Link
+              href="/form"
+              className="inline-flex items-center justify-center bg-gray-50 text-gray-700 border border-gray-200 py-3 px-6 rounded-xl text-xs font-bold shadow-sm hover:bg-gray-100 transition-all"
+            >
+              Lihat Riwayat Catatan
+            </Link>
           </section>
         ) : (
           /* Case 4: Today is unanswered. Embed the clinical question card directly! */
           <section className="bg-white rounded-[2.5rem] p-8 shadow-[0_10px_40px_rgba(0,0,0,0.04)] border border-gray-100 relative overflow-hidden group">
-            
-            {/* Top Right Corner Pending Days Pulsing Notification */}
-            {hasPastPending && (
-              <Link 
-                href="/form" 
-                className="absolute top-4 right-4 flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 hover:bg-amber-200 text-amber-700 text-[10px] font-extrabold rounded-full shadow-sm animate-pulse border border-amber-200 cursor-pointer z-20"
-              >
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500"></span>
-                </span>
-                {otherPendingDays.length} Hari Terlewat
-              </Link>
-            )}
+
 
             <div className="absolute -top-12 -right-12 w-40 h-40 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors duration-700"></div>
             
@@ -514,7 +478,7 @@ export default function DashboardHome() {
             <p className="text-[11px] text-gray-400 font-medium">Visualisasi progres harian pasca persalinan</p>
           </div>
           
-          <div className="bg-white rounded-[2rem] p-5 shadow-[0_8px_30px_rgba(0,0,0,0.02)] border border-gray-50 max-w-3xl mx-auto w-full">
+          <div className="bg-white/90 backdrop-blur-md rounded-[2rem] p-5 shadow-[0_8px_30px_rgba(0,0,0,0.05)] border border-white/50 max-w-3xl mx-auto w-full">
             <div className="flex items-center justify-between w-full relative px-1">
               
               {/* Background Line */}
@@ -601,9 +565,9 @@ export default function DashboardHome() {
           </div>
         </section>
 
-          <div className="flex items-center gap-2 p-3 bg-gray-50 border border-gray-100 rounded-xl text-[10px] font-bold text-gray-400 mt-4 justify-center">
+          <div className="flex items-center gap-2 p-3 bg-white/50 backdrop-blur-sm border border-white/40 rounded-xl text-[10px] font-bold text-gray-500 mt-4 justify-center">
             <ShieldCheck size={14} className="text-primary shrink-0" />
-            <span>Privasi Data Bunda Terjaga &bull; hypemom</span>
+            <span>Privasi Data Bunda Terjaga &bull; hypnomom</span>
           </div>
         </div>
 

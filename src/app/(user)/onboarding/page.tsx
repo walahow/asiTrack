@@ -14,7 +14,6 @@ export default function OnboardingPage() {
   const [formData, setFormData] = useState({
     nama_lengkap: "",
     username: "",
-    tgl_melahirkan: "",
     usia: "",
     anak_ke_berapa: "",
     alamat: "",
@@ -41,12 +40,7 @@ export default function OnboardingPage() {
 
         const data = await res.json();
         if (res.ok && data.status === "success" && data.user) {
-          let tglStr = "";
-          if (data.user.tgl_melahirkan) {
-            const d = new Date(data.user.tgl_melahirkan);
-            const wibDate = toZonedTime(d, "Asia/Jakarta");
-            tglStr = format(wibDate, "yyyy-MM-dd");
-          }
+
           let localDeviceEnabled = !!data.user.notif_enabled;
           
           // In a multi-device setup, the switch should show OFF if THIS specific device hasn't granted permission yet
@@ -60,7 +54,6 @@ export default function OnboardingPage() {
             ...prev,
             nama_lengkap: data.user.nama_lengkap || "",
             username: data.user.username || "",
-            tgl_melahirkan: tglStr,
             usia: data.user.usia || "",
             anak_ke_berapa: data.user.anak_ke_berapa || "",
             alamat: data.user.alamat || "",
@@ -162,7 +155,7 @@ export default function OnboardingPage() {
         <div className="relative w-10 h-10 rounded-xl bg-white border border-primary/10 shadow-sm overflow-hidden">
           <Image
             src="/logo.png"
-            alt="hypemom Logo"
+            alt="hypnomom Logo"
             fill
             sizes="40px"
             className="object-cover"
@@ -170,7 +163,7 @@ export default function OnboardingPage() {
           />
         </div>
         <span className="font-bold text-lg tracking-tight text-primary font-sans">
-          hypemom Onboarding
+          hypnomom Onboarding
         </span>
       </div>
 
@@ -247,20 +240,6 @@ export default function OnboardingPage() {
               </div>
             </div>
 
-            <div className="space-y-1 pb-2">
-              <label htmlFor="tgl_melahirkan" className="text-[11px] font-bold text-gray-700 block">
-                Tanggal Melahirkan *
-              </label>
-              <input
-                type="date"
-                name="tgl_melahirkan"
-                id="tgl_melahirkan"
-                required
-                value={formData.tgl_melahirkan}
-                onChange={handleChange}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-semibold text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-all placeholder:text-gray-400"
-              />
-            </div>
           </div>
 
           <hr className="border-gray-50" />

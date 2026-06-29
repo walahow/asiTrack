@@ -33,7 +33,7 @@ export async function GET() {
 
     // Check for Time Travel Simulation offset
     const cookieStore = await cookies();
-    const simulatedOffsetStr = cookieStore.get('hypemom_timeOffsetDays')?.value;
+    const simulatedOffsetStr = cookieStore.get('hypnomom_timeOffsetDays')?.value;
     const simulatedOffsetDays = simulatedOffsetStr ? parseInt(simulatedOffsetStr, 10) : 0;
 
     // WIB Timezone day calculation using robust UTC math
@@ -51,9 +51,9 @@ export async function GET() {
     // Force align the birth date to the strict start of the WIB day
     const birthWIBStart = new Date(Date.UTC(birthWIB.getUTCFullYear(), birthWIB.getUTCMonth(), birthWIB.getUTCDate()) - TIMEZONE_OFFSET);
     
-    // hari_ke = 1 is the day after birth
+    // hari_ke = 1 is the day of signup (birth)
     const diffTime = todayWIBStart.getTime() - birthWIBStart.getTime();
-    const currentHariKe = Math.round(diffTime / (1000 * 60 * 60 * 24));
+    const currentHariKe = Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
     // Fetch active primary question
     const primaryQuestion = await Question.findOne({ is_primary: true, active: true });

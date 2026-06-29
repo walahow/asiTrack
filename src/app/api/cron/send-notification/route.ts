@@ -69,7 +69,7 @@ export async function GET(request: Request) {
           // Send notification because they haven't filled it out
           const result = await sendMulticastPushNotification(
             user.fcm_tokens,
-            "Pengingat Laktasi hypemom",
+            "Pengingat Laktasi hypnomom",
             template.message
           );
           if (result.success) {

@@ -67,25 +67,6 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center shrink-0">
-              <Percent size={24} />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-500">Response Rate (Hari Ini)</p>
-              <h3 className="text-2xl font-bold text-gray-800">{stats.responseRateToday}%</h3>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:shadow-md transition-shadow xl:col-start-1">
-            <div className="w-12 h-12 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center shrink-0">
-              <Users size={24} />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-500">Tracking Selesai</p>
-              <h3 className="text-2xl font-bold text-gray-800">{stats.completedUsers}</h3>
-            </div>
-          </div>
         </div>
       ) : (
         <div className="p-6 bg-red-50 text-red-600 rounded-2xl">Gagal memuat statistik.</div>

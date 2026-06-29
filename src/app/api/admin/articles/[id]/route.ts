@@ -41,7 +41,7 @@ export async function PATCH(request: Request, props: { params: Promise<{ id: str
     }
 
     await dbConnect();
-    const updatedArticle = await Article.findByIdAndUpdate(id, data, { new: true });
+    const updatedArticle = await Article.findByIdAndUpdate(id, data, { returnDocument: 'after' });
 
     return NextResponse.json({ status: "success", data: updatedArticle });
   } catch (error: any) {

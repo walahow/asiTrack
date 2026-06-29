@@ -49,7 +49,7 @@ export async function PATCH(request: Request, props: { params: Promise<{ id: str
     }
 
     await dbConnect();
-    const updatedVideo = await Video.findByIdAndUpdate(id, data, { new: true });
+    const updatedVideo = await Video.findByIdAndUpdate(id, data, { returnDocument: 'after' });
 
     return NextResponse.json({ status: "success", data: updatedVideo });
   } catch (error: any) {

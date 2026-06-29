@@ -180,7 +180,7 @@ export async function PUT(request: Request) {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       updatePayload,
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     );
 
     if (!updatedUser) {

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { Home, BookOpen, PlaySquare, User, LogOut } from "lucide-react";
+import { Home, BookOpen, PlaySquare, User, LogOut, ClipboardList } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 export default function DesktopTopNav() {
@@ -15,6 +15,7 @@ export default function DesktopTopNav() {
 
   const navItems = [
     { name: "Beranda", href: "/dashboard", icon: <Home size={18} /> },
+    { name: "Riwayat", href: "/form", icon: <ClipboardList size={18} /> },
     { name: "Artikel Edukasi", href: "/pojok-baca", icon: <BookOpen size={18} /> },
     { name: "Video Panduan", href: "/video", icon: <PlaySquare size={18} /> },
   ];

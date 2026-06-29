@@ -40,7 +40,7 @@ export async function PATCH(request: Request, props: { params: Promise<{ id: str
       await Question.updateMany({ _id: { $ne: id } }, { is_primary: false });
     }
 
-    const updatedQuestion = await Question.findByIdAndUpdate(id, data, { new: true });
+    const updatedQuestion = await Question.findByIdAndUpdate(id, data, { returnDocument: 'after' });
 
     return NextResponse.json({ status: "success", data: updatedQuestion });
   } catch (error: any) {

@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { writeFile, mkdir } from "fs/promises";
+import { put } from "@vercel/blob";
 import path from "path";
 import crypto from "crypto";
-import fs from "fs";
 
 export async function POST(request: Request) {
   try {
@@ -19,22 +18,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ status: "error", message: "No file provided" }, { status: 400 });
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
+    // Generate random filename to avoid collisions
     const ext = path.extname(file.name);
     const filename = `${crypto.randomBytes(16).toString("hex")}${ext}`;
-    
-    // Ensure the uploads directory exists
-    const uploadDir = path.join(process.cwd(), "public/uploads");
-    if (!fs.existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
 
-    const filepath = path.join(uploadDir, filename);
-    await writeFile(filepath, buffer);
+    // Upload directly to Vercel Blob
+    const blob = await put(filename, file, {
+      access: 'public',
+    });
 
-    const imageUrl = `/uploads/${filename}`;
-
-    return NextResponse.json({ status: "success", url: imageUrl });
+    return NextResponse.json({ status: "success", url: blob.url });
   } catch (error: any) {
     console.error("Upload error:", error);
     return NextResponse.json({ status: "error", message: "Failed to upload image" }, { status: 500 });

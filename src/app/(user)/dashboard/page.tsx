@@ -479,29 +479,31 @@ export default function DashboardHome() {
           </div>
           
           <div className="bg-white/90 backdrop-blur-md rounded-[2rem] p-5 shadow-[0_8px_30px_rgba(0,0,0,0.05)] border border-white/50 max-w-3xl mx-auto w-full">
-            <div className="flex items-center justify-between w-full relative px-1">
+            <div className="relative w-full">
               
-              {/* Background Line */}
-              <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 h-1 bg-gray-100 rounded-full -z-10"></div>
-              
-              {/* Progress Line */}
-              <div 
-                className="absolute left-4 top-1/2 -translate-y-1/2 h-1 bg-primary rounded-full -z-10 transition-all duration-1000"
-                style={{ 
-                  width: `${
-                    currentHariKe <= 0
-                      ? "0%"
-                      : currentHariKe >= 7
-                      ? "100%"
-                      : `calc(${((Math.min(currentHariKe, 7) - 1) / 6) * 100}% - 4px)`
-                  }` 
-                }}
-              ></div>
+              {/* Line Container (Spans from center of first node to center of last node) */}
+              <div className="absolute left-[calc(100%/14)] right-[calc(100%/14)] top-5 -translate-y-1/2 h-1 bg-gray-100 rounded-full -z-10">
+                {/* Progress Line */}
+                <div 
+                  className="absolute left-0 top-0 bottom-0 bg-primary rounded-full transition-all duration-1000"
+                  style={{ 
+                    width: `${
+                      currentHariKe <= 1
+                        ? "0%"
+                        : currentHariKe >= 7
+                        ? "100%"
+                        : `${((Math.min(currentHariKe, 7) - 1) / 6) * 100}%`
+                    }` 
+                  }}
+                ></div>
+              </div>
 
-              {timeline.map((item) => (
+              {/* Grid Container for Nodes */}
+              <div className="grid grid-cols-7 w-full">
+                {timeline.map((item) => (
                 <div key={item.dayNum} className="flex flex-col items-center relative z-10">
                   {/* Icon Node */}
-                  <div className="mb-2 relative flex items-center justify-center">
+                  <div className="mb-2 h-10 relative flex items-center justify-center">
                     
                     {/* State 1: Specific Milestone Celebration Day (Orange bouncing dot) */}
                     {item.status === "milestone" && (
@@ -561,6 +563,7 @@ export default function DashboardHome() {
                   </span>
                 </div>
               ))}
+              </div>
             </div>
           </div>
         </section>

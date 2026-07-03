@@ -91,7 +91,7 @@ export default function VideoDetailPage() {
       </div>
 
       {/* Details Section */}
-      <div className="p-6 bg-white rounded-t-3xl -mt-6 relative z-10 min-h-[50vh] shadow-[0_-10px_20px_rgba(0,0,0,0.03)]">
+      <div className="p-6 bg-white rounded-3xl mt-6 mx-4 relative z-10 min-h-[50vh] shadow-sm border border-gray-100">
         <h1 className="text-xl font-black text-gray-900 leading-tight mb-4">
           {video.title}
         </h1>

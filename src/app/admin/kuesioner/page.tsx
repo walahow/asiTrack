@@ -259,7 +259,7 @@ export default function AdminKuesionerPage() {
         {activeTab === "users" ? (
           <>
             {/* Left Sidebar: User List */}
-            <div className="w-full md:w-1/3 bg-white border border-gray-200 rounded-3xl overflow-hidden flex flex-col shadow-sm">
+            <div className={`w-full md:w-1/3 bg-white border border-gray-200 rounded-3xl overflow-hidden flex-col shadow-sm ${selectedUserId ? 'hidden md:flex' : 'flex'}`}>
               <div className="p-4 border-b border-gray-100 bg-gray-50/50">
                 <form onSubmit={handleSearch} className="relative">
                   <input
@@ -311,7 +311,7 @@ export default function AdminKuesionerPage() {
             </div>
 
             {/* Right Content: User Details & Logs */}
-            <div className="w-full md:w-2/3 bg-white border border-gray-200 rounded-3xl overflow-y-auto shadow-sm p-6 lg:p-8">
+            <div className={`w-full md:w-2/3 bg-white border border-gray-200 rounded-3xl overflow-y-auto shadow-sm p-6 lg:p-8 ${!selectedUserId ? 'hidden md:block' : 'block'}`}>
               {!selectedUserId ? (
                 <div className="h-full flex flex-col items-center justify-center text-gray-400 space-y-4">
                   <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center">
@@ -325,8 +325,11 @@ export default function AdminKuesionerPage() {
                 </div>
               ) : userData?.user ? (
                 <div>
-                  <div className="flex items-start justify-between border-b border-gray-100 pb-6">
+                  <div className="flex flex-col md:flex-row md:items-start justify-between border-b border-gray-100 pb-6 gap-4">
                     <div>
+                      <button onClick={() => setSelectedUserId(null)} className="md:hidden flex items-center gap-1 text-sm font-bold text-gray-500 hover:text-primary mb-3">
+                        <X size={16} /> Kembali
+                      </button>
                       <h2 className="text-2xl font-black text-gray-800 mb-1">{userData.user.nama_lengkap}</h2>
                       <p className="text-primary font-bold text-sm">@{userData.user.username}</p>
                     </div>
@@ -397,7 +400,7 @@ export default function AdminKuesionerPage() {
                           {q.order}
                         </div>
                         <div>
-                          <h4 className="font-bold text-gray-800 mb-1 flex items-center gap-2">
+                          <h4 className="font-bold text-gray-800 mb-1 flex flex-wrap items-center gap-2">
                             {q.pertanyaan}
                             {q.is_primary && (
                               <span className="text-[10px] bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full uppercase tracking-wider">Primary Milestone</span>
